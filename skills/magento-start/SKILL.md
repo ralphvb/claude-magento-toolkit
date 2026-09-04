@@ -108,6 +108,15 @@ Recommend exactly one stage:
 
 When `magento-discover` is appropriate, recommend `/magento-discover` but do not invoke it.
 
+Recommend a model and effort level for that next stage:
+
+- bounded discovery, normal implementation, and ordinary tests → `Sonnet`, `Medium`;
+- difficult debugging, high-ambiguity analysis, or independent review → `Sonnet`, `High`;
+- cross-cutting architecture, critical integrations, or high-risk legacy decisions → `Opus`, `High`;
+- bounded mechanical work with deterministic validation → `Haiku`, `Low`.
+
+Use the least expensive route that can reliably perform the work. State a one-sentence reason when recommending `Opus`.
+
 ## 5. Output
 
 Use exactly this structure:
@@ -152,6 +161,8 @@ Use exactly this structure:
 ## Recommended Next Stage
 
 - Stage:
+- Model:
+- Effort:
 - Reason:
 - Suggested action:
 ```
