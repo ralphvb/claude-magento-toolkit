@@ -52,7 +52,17 @@ Use `Open questions: None` when no relevant question remains.
 
 A gap is blocking only if its answer could materially change the mode, authorized scope, expected behavior, compatibility, security/data handling, acceptance criteria, or deliverable. Ask at most three questions.
 
-If blocked, recommend `Complete intake` and stop. Otherwise write `Blocking gaps: None`.
+If blocked:
+
+- list one to three concise questions under `Blocking Gaps`;
+- use `Complete intake` as the stage;
+- use `No change` as both the model and effort;
+- explain that required information could materially change the work;
+- use `Not applicable until intake is complete.` as the routing gate;
+- use exactly this suggested action: `Answer the blocking questions above, then rerun /magento-start with the completed request.`;
+- stop without applying the routing rules in section 4.
+
+Otherwise write `Blocking gaps: None` and continue to section 4.
 
 ## 4. Next stage and routing
 

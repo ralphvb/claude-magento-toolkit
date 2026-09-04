@@ -1,7 +1,7 @@
 # Token Strategy
 
 **Version:** `0.1.0`  
-**Status:** measured intake policy; discovery measurements remain pending
+**Status:** measured DIAGNOSTIC non-blocking intake path; remaining intake and discovery measurements are pending
 
 ## 1. Objective
 
@@ -223,7 +223,9 @@ Local configuration is not distributed in the public repository.
 
 ## 9. Git policy
 
-Claude does not execute Git or GitHub CLI commands. This prevents Git output, repository history, and remote operations from entering the workflow unless the user deliberately supplies them.
+Toolkit workflows do not execute Git or GitHub CLI commands. This prevents Git output, repository history, and remote operations from entering the workflow unless the user deliberately supplies them.
+
+This workflow policy is independent of machine configuration. A work profile should deny Git and GitHub CLI commands used by Claude. A personal profile may retain those permissions for non-toolkit workflows such as training. The public toolkit does not distribute either profile, and an available permission does not change the toolkit's stop-before-Git contract.
 
 The user owns:
 

@@ -1,7 +1,7 @@
 # Workflows
 
 **Version:** `0.1.0`  
-**Status:** validated intake contract; remaining workflow capabilities are planned
+**Status:** DIAGNOSTIC non-blocking intake path validated; remaining intake paths and workflow capabilities are pending
 
 ## 1. General rules
 

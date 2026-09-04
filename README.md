@@ -2,8 +2,8 @@
 
 Reusable, token-conscious workflows for developing, diagnosing, testing, and reviewing Magento Open Source and Adobe Commerce code with Claude Code.
 
-**Current version:** `0.1.0`  
-**Status:** validated intake foundation; discovery remains planned
+**Target version:** `0.1.0`  
+**Status:** DIAGNOSTIC non-blocking intake path validated; remaining intake paths and discovery are pending
 
 ## Purpose
 
@@ -74,7 +74,7 @@ See [docs/workflows.md](docs/workflows.md) for mode-specific behavior.
 
 ## Model routing
 
-| Work type | Default model | Typical effort |
+| Work type | Recommended model | Typical effort |
 |---|---|---|
 | Mechanical edits, compact validation, PHPDoc | Haiku | Low |
 | Discovery, normal implementation, unit tests | Sonnet | Medium |
@@ -110,6 +110,7 @@ Auto Memory is expected to be disabled for controlled, auditable workflows. The 
 ```text
 claude-magento-toolkit/
 ├── README.md
+├── LICENSE
 ├── .gitignore
 ├── docs/
 │   ├── architecture.md
@@ -119,6 +120,9 @@ claude-magento-toolkit/
 │   ├── magento-start/
 │   │   └── SKILL.md
 │   └── magento-discover/        # planned for v0.1.0
+├── tests/
+│   └── magento-start/
+│       └── manual-validation.md
 └── templates/
     ├── request.md
     └── diagnostic-assessment.md
