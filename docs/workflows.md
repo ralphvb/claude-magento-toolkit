@@ -1,7 +1,7 @@
 # Workflows
 
 **Version:** `0.1.0`  
-**Status:** workflow contracts
+**Status:** validated intake contract; remaining workflow capabilities are planned
 
 ## 1. General rules
 
@@ -33,7 +33,26 @@ NON-GOALS
 
 Business context, symptoms, known facts, and hypotheses should be added when they materially change the work.
 
-`magento-start` normalizes this information and recommends a single next stage. It does not run the complete workflow automatically.
+`magento-start` normalizes this information and recommends a single next stage, model, and effort level. It does not run the complete workflow automatically or claim that its recommendation changed the runtime.
+
+Before approving the next stage, the user verifies the active route and changes it only when it differs from the recommendation. This keeps routing visible without requiring a redundant selection at every boundary.
+
+Do not define `model` or `effortLevel` in global settings. Use three routing layers instead:
+
+1. Skill frontmatter declares the preferred route for that Skill.
+2. Session flags provide deterministic routing for a main-context stage.
+3. Agent frontmatter provides isolated routing when a separate context is justified.
+
+For example:
+
+```bash
+claude --model sonnet --effort medium
+claude --model sonnet --effort high
+claude --model haiku --effort low
+claude --model opus --effort high
+```
+
+These are stage-specific session choices, not global defaults. Explicit session selection, environment variables, organization policy, or runtime behavior may take precedence over Skill frontmatter, so routing remains a human-controlled gate.
 
 ## 3. Diagnostic workflow
 
@@ -73,6 +92,26 @@ Required output properties:
 - prioritized next steps.
 
 Use `templates/diagnostic-assessment.md` for the result.
+
+The target `v0.1.0` diagnostic sequence is:
+
+```text
+/magento-start <task>
+        ↓
+review normalized intake and model route
+        ↓
+preserve the confirmed request
+        ↓
+/clear or start a routed session when detailed intake context is no longer needed
+        ↓
+verify the recommended model and effort
+        ↓
+/magento-discover <confirmed request and scope>
+        ↓
+review evidence and choose the next stage
+```
+
+`magento-discover` remains planned. Its contract is to use an explicitly verified route, perform bounded read-only inspection, and stop without implementing its recommendations.
 
 ## 4. Bugfix workflow
 
@@ -292,6 +331,8 @@ implementation → independent review
 ```
 
 Do not clear merely because a fixed number of turns has elapsed.
+
+If the next stage uses the same model and effort, `/clear` is sufficient after the handoff has been captured. If the route changes, prefer a new session launched with `--model` and `--effort`; this keeps global settings neutral and makes the stage configuration reproducible.
 
 ## 12. Handoff contract
 

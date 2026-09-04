@@ -1,7 +1,7 @@
 # Architecture
 
 **Version:** `0.1.0`  
-**Status:** initial design
+**Status:** validated intake foundation; discovery remains planned
 
 ## 1. Objective
 
@@ -50,7 +50,7 @@ It does not include:
                      Human workflow gate
                               │
                               ▼
-                     magento-discover
+                magento-discover (planned)
                               │
                   bounded, read-only evidence
                               │
@@ -157,6 +157,32 @@ Routing rules:
 - use deterministic tools instead of model reasoning for deterministic facts;
 - exclude Fable.
 
+Global settings must not define `model` or `effortLevel`. Routing belongs to the workflow layer:
+
+```text
+Skill frontmatter
+    preferred route while a Skill is active
+
+Session launch flags
+    deterministic route for a bounded main-context stage
+
+Agent frontmatter
+    isolated route when a separate context is justified
+```
+
+Skill frontmatter declares routing intent but is not treated as proof of runtime state. An explicit session selection, environment variable, organization policy, or runtime behavior may take precedence. Every stage recommendation therefore ends with a human gate: verify the active model and effort, and change them only when they do not match.
+
+Use session-scoped flags when the route must be deterministic without changing global settings:
+
+```bash
+claude --model sonnet --effort medium
+claude --model sonnet --effort high
+claude --model haiku --effort low
+claude --model opus --effort high
+```
+
+If the active route already matches the recommendation, continue without a redundant change.
+
 ## 8. Context architecture
 
 ### Public toolkit context
@@ -183,13 +209,13 @@ Only artifacts required by the task should exist. They must remain outside the p
 
 ### Conversation context
 
-Conversation history is temporary working memory. Use `/clear` when a stage is complete and its durable facts have been captured.
+Conversation history is temporary working memory. Use `/clear` when a stage is complete and its durable facts have been captured. If the next stage requires a different route, prefer a new bounded session launched with `--model` and `--effort`.
 
 ## 9. Skills architecture
 
 Skills represent bounded, repeatable procedures.
 
-### Initial Skill: `magento-start`
+### Validated Skill: `magento-start`
 
 Responsibilities:
 
@@ -197,11 +223,14 @@ Responsibilities:
 - normalize the request;
 - identify only material missing information;
 - establish constraints and non-goals;
-- recommend one next stage.
+- recommend one next stage;
+- recommend the least expensive reliable model and effort for that stage;
+- require a human routing gate;
+- use deterministic next-action templates that do not expand the stated scope.
 
-It must not perform broad discovery or implementation.
+It must not inspect the repository, use tools, import inherited project facts into intake, perform discovery, or begin implementation.
 
-### Initial Skill: `magento-discover`
+### Planned Skill: `magento-discover`
 
 Responsibilities:
 
@@ -212,7 +241,7 @@ Responsibilities:
 - identify testing and validation entry points;
 - return a compact discovery artifact.
 
-It must not modify source code.
+It must not modify source code. Its route will be verified explicitly before invocation. Its implementation may use the main session or an isolated Explore context, but that choice must be validated against discovery quality and context cost before becoming part of the stable contract.
 
 ### Later Skills
 
@@ -249,7 +278,7 @@ All Git and GitHub CLI operations are user-owned. This must be enforced through 
 
 ### Auto Memory
 
-Auto Memory is disabled for controlled workflows. Durable context must be deliberate and auditable.
+Auto Memory is disabled locally for controlled project workflows. This is a project or environment choice, not a global setting distributed by the toolkit. Explicit project `CLAUDE.md` files remain available and are distinct from Auto Memory.
 
 ### Hooks
 
@@ -264,8 +293,8 @@ No integration is included by default. Add one only when it removes repeated wor
 Version `0.1.0` is complete when:
 
 - documentation and templates are internally consistent;
-- `magento-start` has a stable intake contract;
-- `magento-discover` has a stable read-only contract;
+- the validated `magento-start` intake contract remains stable after installation;
+- `magento-discover` is implemented and its read-only contract is validated;
 - manual installation has been tested;
-- one authorized pilot has produced token and quality measurements;
+- authorized intake and discovery pilots have produced token and quality measurements;
 - client information has remained outside the public repository.

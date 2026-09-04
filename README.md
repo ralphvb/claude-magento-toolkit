@@ -3,7 +3,7 @@
 Reusable, token-conscious workflows for developing, diagnosing, testing, and reviewing Magento Open Source and Adobe Commerce code with Claude Code.
 
 **Current version:** `0.1.0`  
-**Status:** initial documentation and workflow contracts
+**Status:** validated intake foundation; discovery remains planned
 
 ## Purpose
 
@@ -18,7 +18,7 @@ This toolkit provides a small, auditable methodology for AI-assisted Magento dev
 - keep Git under human control;
 - preserve strict boundaries between generic methodology and client information.
 
-The toolkit is intentionally incremental. Version `0.1.0` documents the architecture and defines the contracts for two future Skills: `magento-start` and `magento-discover`.
+The toolkit is intentionally incremental. The current rollout has implemented and empirically validated the manually invoked `magento-start` Skill. `magento-discover` is the next planned capability in version `0.1.0`.
 
 ## Design principles
 
@@ -85,6 +85,16 @@ See [docs/workflows.md](docs/workflows.md) for mode-specific behavior.
 
 Model routing is a starting policy, not a permanent rule. Adjust it using measured quality, `/usage`, and `/context` results.
 
+Do not pin `model` or `effortLevel` in global settings. Skill and Agent frontmatter declare the preferred route, but the runtime may also be affected by an explicit session selection, environment variables, or organization policy. Therefore, each stage ends with a human routing gate.
+
+When a stage must run with a guaranteed route, launch a bounded session explicitly:
+
+```bash
+claude --model sonnet --effort medium
+```
+
+Use `--model` and `--effort` at meaningful stage boundaries, not as permanent personal defaults. If the next stage already matches the active route, continue without changing it.
+
 ## Context boundaries
 
 The public toolkit contains only reusable methodology.
@@ -105,20 +115,52 @@ claude-magento-toolkit/
 │   ├── architecture.md
 │   ├── workflows.md
 │   └── token-strategy.md
+├── skills/
+│   ├── magento-start/
+│   │   └── SKILL.md
+│   └── magento-discover/        # planned for v0.1.0
 └── templates/
     ├── request.md
     └── diagnostic-assessment.md
 ```
 
-Planned additions after the documentation contracts are validated:
+## Installation
+
+Install the Skills manually so the copied files remain easy to inspect:
+
+```bash
+mkdir -p ~/.claude/skills
+cp -R skills/magento-start ~/.claude/skills/
+```
+
+Review an existing destination before overwriting it. Restart Claude Code if the top-level personal `skills` directory did not exist when the session started.
+
+`magento-start` uses `disable-model-invocation: true`, so it remains unavailable to automatic model invocation and adds no skill-description cost until the user invokes it. Future workflow Skills should follow the same default unless automatic invocation provides measured value.
+
+## Usage
+
+For a deterministic Sonnet Medium intake without changing global settings, start a bounded session:
+
+```bash
+claude --model sonnet --effort medium
+```
+
+Then provide a bounded task description:
 
 ```text
-skills/
-├── magento-start/
-│   └── SKILL.md
-└── magento-discover/
-    └── SKILL.md
+/magento-start Diagnose why a custom inventory import does not advance between batches. Perform read-only analysis only.
 ```
+
+Review the normalized intake, routing gate, and proposed next stage. The route is a recommendation; verify the active runtime and change it only when needed.
+
+Once `magento-discover` is implemented, a confirmed diagnostic can continue in a clean stage:
+
+```text
+/clear
+/magento-discover <confirmed normalized request and scope>
+```
+
+The planned `magento-discover` Skill will use the active or explicitly routed session, perform bounded read-only discovery, and stop after recommending one next stage.
 
 ## Public repository boundary
 
