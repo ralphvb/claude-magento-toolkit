@@ -89,7 +89,7 @@ Required output properties:
 - defects separated from technical debt;
 - no source-code dump;
 - no implementation;
-- prioritized next steps.
+- one recommended next stage.
 
 Use `templates/diagnostic-assessment.md` for the result.
 
