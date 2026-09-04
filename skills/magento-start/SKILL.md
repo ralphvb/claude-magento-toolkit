@@ -13,6 +13,20 @@ Use `$ARGUMENTS` as the initial work request.
 
 Always respond in English, regardless of the language used in the request. Preserve code identifiers, paths, commands, and product names exactly as provided.
 
+## Intake source
+
+Use only the information explicitly provided in `$ARGUMENTS` and the current invocation as the factual source for intake.
+
+Ignore automatically loaded project context, including:
+
+- `CLAUDE.md` content;
+- Memory files;
+- repository summaries;
+- previously discovered project information;
+- prior task or conversation details not repeated in the current invocation.
+
+Do not mention, summarize, or convert that background context into `KNOWN FACTS`, `SCOPE`, `BUSINESS CONTEXT`, or `OPEN QUESTIONS`. Repository evidence belongs to the discovery stage.
+
 ## Boundary
 
 This Skill performs intake only.
@@ -26,6 +40,7 @@ Do not:
 - perform Git or GitHub operations;
 - begin discovery, planning, testing, or implementation;
 - invent project facts, paths, commands, requirements, or business rules;
+- introduce file names, implementation details, documentation claims, or missing-file claims that were not provided in the current invocation;
 - treat hypotheses as verified findings;
 - request or reproduce credentials, secrets, or private customer data.
 
@@ -68,6 +83,9 @@ Rules:
 - preserve the user's intent;
 - separate verified facts from hypotheses;
 - use `Not provided` when missing information should remain visible;
+- use only facts stated in the current invocation;
+- if the user names a module but not its path, preserve the module name without inventing a path;
+- place plausible mechanisms under `HYPOTHESES TO VERIFY`, clearly labeled as unverified;
 - do not infer requirements that could change behavior or scope;
 - keep each section concise;
 - do not repeat the same information across sections.
@@ -94,7 +112,13 @@ If no blocking answer is required, write:
 Blocking gaps: None
 ```
 
-Keep non-blocking uncertainty under `OPEN QUESTIONS`.
+Keep non-blocking uncertainty under `OPEN QUESTIONS` only when it affects the recommended next stage.
+
+Do not invent optional follow-up work, documentation requests, deliverables, or questions that are not implied by the current invocation. If no relevant question remains, write:
+
+```text
+Open questions: None
+```
 
 ## 4. Recommend one next stage
 
