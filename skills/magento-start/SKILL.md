@@ -3,6 +3,50 @@ name: magento-start
 description: Classify and normalize a Magento Open Source or Adobe Commerce request, identify blocking gaps, and recommend one next stage.
 argument-hint: "[task description]"
 disable-model-invocation: true
+disallowed-tools:
+  - Agent
+  - Artifact
+  - AskUserQuestion
+  - Bash
+  - CronCreate
+  - CronDelete
+  - CronList
+  - Edit
+  - EnterPlanMode
+  - EnterWorktree
+  - ExitPlanMode
+  - ExitWorktree
+  - Glob
+  - Grep
+  - ListAgents
+  - ListMcpResourcesTool
+  - LSP
+  - Monitor
+  - NotebookEdit
+  - PowerShell
+  - PushNotification
+  - Read
+  - ReadMcpResourceTool
+  - RemoteTrigger
+  - ReportFindings
+  - ScheduleWakeup
+  - SendMessage
+  - SendUserFile
+  - ShareOnboardingGuide
+  - Skill
+  - TaskCreate
+  - TaskGet
+  - TaskList
+  - TaskOutput
+  - TaskStop
+  - TaskUpdate
+  - TodoWrite
+  - ToolSearch
+  - WaitForMcpServers
+  - WebFetch
+  - WebSearch
+  - Workflow
+  - Write
 model: sonnet
 effort: medium
 ---
@@ -14,6 +58,8 @@ Use `$ARGUMENTS` as the request. Respond in English. Preserve identifiers, paths
 ## Intake boundary
 
 This Skill performs intake only. Do not read files, inspect the repository, run tools or commands, modify anything, invoke Skills or agents, use Git/GitHub, or start discovery, planning, testing, or implementation.
+
+The named `disallowed-tools` entries remove those tools only during the turn that invokes this Skill. They do not validate the intake semantically. Intake validation, scope discipline, and the stop condition remain prompt- and human-enforced. A later user message clears the Skill-local tool restrictions.
 
 Treat only `$ARGUMENTS` and information explicitly supplied in this invocation as factual input. Ignore `CLAUDE.md`, Memory files, repository summaries, previous conversations, and previously discovered information in every output section.
 
