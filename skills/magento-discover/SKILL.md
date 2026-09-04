@@ -3,6 +3,47 @@ name: magento-discover
 description: Perform bounded, evidence-based, read-only repository discovery for a human-approved Magento Open Source or Adobe Commerce task and recommend one next stage.
 argument-hint: "[approved normalized request]"
 disable-model-invocation: true
+disallowed-tools:
+  - Agent
+  - Artifact
+  - AskUserQuestion
+  - Bash
+  - CronCreate
+  - CronDelete
+  - CronList
+  - Edit
+  - EnterPlanMode
+  - EnterWorktree
+  - ExitPlanMode
+  - ExitWorktree
+  - ListAgents
+  - ListMcpResourcesTool
+  - LSP
+  - Monitor
+  - NotebookEdit
+  - PowerShell
+  - PushNotification
+  - ReadMcpResourceTool
+  - RemoteTrigger
+  - ReportFindings
+  - ScheduleWakeup
+  - SendMessage
+  - SendUserFile
+  - ShareOnboardingGuide
+  - Skill
+  - TaskCreate
+  - TaskGet
+  - TaskList
+  - TaskOutput
+  - TaskStop
+  - TaskUpdate
+  - TodoWrite
+  - ToolSearch
+  - WaitForMcpServers
+  - WebFetch
+  - WebSearch
+  - Workflow
+  - Write
 model: sonnet
 effort: medium
 ---
@@ -14,6 +55,8 @@ Use `$ARGUMENTS` as the approved intake. Respond in English. Preserve identifier
 ## Discovery boundary
 
 This Skill performs bounded, read-only repository discovery only. Do not reclassify or expand the intake, modify files, use Git or GitHub, reproduce behavior, write specifications or plans, implement, refactor, test, validate, or review. Do not run commands that can change state, generate artifacts or caches, access a database or external service, or expose secrets.
+
+The named `disallowed-tools` entries leave only the direct repository-read tools `Read`, `Glob`, and `Grep` available for this Skill's work, subject to the session's baseline permissions. The denials apply only during the invoking turn. They do not validate the intake before a read or enforce scope, evidence quality, or stop conditions; those controls remain prompt- and human-enforced. A later user message clears the Skill-local tool restrictions.
 
 Do not write task-specific findings into this public toolkit. Keep discovery results in the response or in a separately authorized private artifact.
 
