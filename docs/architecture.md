@@ -1,271 +1,349 @@
-# Architecture
+# Workflows
 
 **Version:** `0.1.0`  
-**Status:** initial design
+**Status:** DIAGNOSTIC non-blocking intake path validated; remaining intake paths and workflow capabilities are pending
 
-## 1. Objective
+## 1. General rules
 
-This architecture defines a reusable, token-conscious development workflow for Magento Open Source and Adobe Commerce with Claude Code.
+Every workflow must:
 
-It is a methodology layer, not a source of client or project knowledge. It must remain safe to publish and portable between personal and work computers.
+1. begin with an explicit or inferred intake mode;
+2. define scope and non-goals;
+3. distinguish known facts from hypotheses;
+4. read only the minimum relevant code;
+5. preserve durable decisions before `/clear`;
+6. use deterministic validation where available;
+7. stop at human-controlled boundaries;
+8. leave Git to the user.
 
-## 2. Scope
+## 2. Common intake
 
-The architecture covers:
+Start from `templates/request.md`.
 
-- task intake and classification;
-- bounded discovery;
-- lightweight Spec-Driven Development;
-- TDD and legacy characterization;
-- model routing;
-- context boundaries and `/clear` usage;
-- reusable Skills and selective Agents;
-- deterministic validation;
-- Git restrictions;
-- a staged rollout.
-
-It does not include:
-
-- project `CLAUDE.md` files;
-- client-specific Rules or configuration;
-- proprietary source code or findings;
-- a universal Magento architecture prescription;
-- autonomous Git operations;
-- automatic end-to-end pipelines.
-
-## 3. Core architecture
+The minimum useful intake is:
 
 ```text
-                         User request
-                              │
-                              ▼
-                       magento-start
-                              │
-             ┌────────────────┼────────────────┐
-             │                │                │
-        classify          normalize        constrain
-             │                │                │
-             └────────────────┼────────────────┘
-                              ▼
-                     Human workflow gate
-                              │
-                              ▼
-                     magento-discover
-                              │
-                  bounded, read-only evidence
-                              │
-                              ▼
-               specification / plan if needed
-                              │
-                              ▼
-                TDD or characterization tests
-                              │
-                              ▼
-                       implementation
-                              │
-                              ▼
-                 deterministic validation
-                              │
-                              ▼
-              independent review when justified
-                              │
-                              ▼
-                      Human-owned Git
+MODE
+TASK
+SCOPE
+CONSTRAINTS
+EXPECTED DELIVERABLE
+NON-GOALS
 ```
 
-The user remains the workflow controller. Skills expose stages; they do not silently chain every stage.
+Business context, symptoms, known facts, and hypotheses should be added when they materially change the work.
 
-## 4. Intake classification
+`magento-start` normalizes this information and recommends a single next stage, model, and effort level. It does not run the complete workflow automatically or claim that its recommendation changed the runtime.
 
-### `DIAGNOSTIC`
+Before approving the next stage, the user verifies the active route and changes it only when it differs from the recommendation. This keeps routing visible without requiring a redundant selection at every boundary.
 
-Use when the problem, cause, or remediation scope is uncertain.
+Do not define `model` or `effortLevel` in global settings. Use three routing layers instead:
 
-Default constraints:
+1. Skill frontmatter declares the preferred route for that Skill.
+2. Session flags provide deterministic routing for a main-context stage.
+3. Agent frontmatter provides isolated routing when a separate context is justified.
 
-- read-only;
-- no Git;
+For example:
+
+```bash
+claude --model sonnet --effort medium
+claude --model sonnet --effort high
+claude --model haiku --effort low
+claude --model opus --effort high
+```
+
+These are stage-specific session choices, not global defaults. Explicit session selection, environment variables, organization policy, or runtime behavior may take precedence over Skill frontmatter, so routing remains a human-controlled gate.
+
+## 3. Diagnostic workflow
+
+Use when implementation scope cannot yet be responsibly defined.
+
+```text
+Fresh or bounded context
+        ↓
+Normalized DIAGNOSTIC request
+        ↓
+Read-only discovery
+        ↓
+Execution-flow reconstruction
+        ↓
+Verified findings vs. hypotheses
+        ↓
+Risk and technical-debt classification
+        ↓
+Client questions and validation plan
+        ↓
+Progressive remediation options
+        ↓
+Human scope decision
+```
+
+Required output properties:
+
+- concise executive summary;
+- business purpose;
+- current architecture and flow;
+- evidence with exact files and symbols;
+- verified findings clearly labeled;
+- potential risks clearly labeled;
+- defects separated from technical debt;
+- no source-code dump;
 - no implementation;
-- facts separated from hypotheses;
-- concise evidence-backed output;
-- open questions and validation plan included.
+- prioritized next steps.
 
-### `BUGFIX`
+Use `templates/diagnostic-assessment.md` for the result.
 
-Use when expected behavior and observed behavior differ.
-
-Required sequence:
+The target `v0.1.0` diagnostic sequence is:
 
 ```text
-reproduce → failing test → smallest correction → regression validation
+/magento-start <task>
+        ↓
+review normalized intake and model route
+        ↓
+preserve the confirmed request
+        ↓
+/clear or start a routed session when detailed intake context is no longer needed
+        ↓
+verify the recommended model and effort
+        ↓
+/magento-discover <confirmed request and scope>
+        ↓
+review evidence and choose the next stage
 ```
 
-### `FEATURE`
+`magento-discover` remains planned. Its contract is to use an explicitly verified route, perform bounded read-only inspection, and stop without implementing its recommendations.
 
-Use for new behavior. Establish business purpose, acceptance criteria, scope, non-goals, compatibility requirements, and tests before broad implementation.
-
-### `REFACTOR`
-
-Use to improve structure without intentionally changing behavior. Protect legacy behavior with characterization tests before modifying it.
-
-### `MECHANICAL`
-
-Use for low-ambiguity transformations with small scope and deterministic validation. This is the primary Haiku path.
-
-## 5. Lightweight SDD
-
-The process uses only as much specification as the risk requires.
-
-A lightweight specification answers:
-
-1. What behavior exists?
-2. What must remain unchanged?
-3. What must change?
-4. How will success be verified?
-5. What is outside scope?
-6. Which risks or unknowns remain?
-
-Small tasks may answer these questions in the normalized request. Cross-cutting or high-risk work may require a separate specification and plan.
-
-## 6. TDD and characterization
-
-Behavioral changes use TDD where practical:
-
-- bugfix: reproduce, fail, fix, pass;
-- feature: acceptance behavior, test, implementation;
-- refactor: characterize, refactor, prove unchanged behavior.
-
-Characterization tests describe what legacy code currently does. They do not automatically declare that behavior correct. Suspected defects remain labeled until business intent or a verified contract determines the desired behavior.
-
-## 7. Model architecture
+## 4. Bugfix workflow
 
 ```text
-Low ambiguity              Medium complexity              High complexity
-      │                            │                             │
-      ▼                            ▼                             ▼
-    Haiku                        Sonnet                         Opus
-      │                            │                             │
-mechanical work          everyday development       architecture and
-compact validation       tests and debugging        critical legacy analysis
+Expected behavior
+       +
+Observed behavior
+        ↓
+Reproduce the defect
+        ↓
+Identify the cause
+        ↓
+Create a failing regression test
+        ↓
+Implement the smallest correction
+        ↓
+Run focused validation
+        ↓
+Run proportionate broader validation
+        ↓
+Review scope and regressions
+        ↓
+Human Git workflow
 ```
 
-Routing rules:
+Rules:
 
-- choose the least expensive model that reliably completes the task;
-- increase effort before changing model when the task remains within the model's strengths;
-- return from Opus to Sonnet after the architectural decision is established;
-- use deterministic tools instead of model reasoning for deterministic facts;
-- exclude Fable.
+- do not combine unrelated modernization with the fix;
+- do not rewrite the affected area unless the fix cannot be made safely otherwise;
+- confirm that the test failed for the intended reason;
+- report validation that was not possible;
+- preserve external contracts unless the request explicitly changes them.
 
-## 8. Context architecture
-
-### Public toolkit context
-
-Contains generic workflows, checklists, templates, and routing policy.
-
-### Project context
-
-Project instructions and any project `CLAUDE.md` remain outside this toolkit. The toolkit neither distributes nor assumes them.
-
-### Task context
-
-Task artifacts preserve the minimum durable state needed across session boundaries:
+## 5. Feature workflow
 
 ```text
-request.md
-discovery.md
-spec.md
-plan.md
-assessment.md
+Business outcome
+        ↓
+Acceptance criteria
+        ↓
+Dependency and compatibility discovery
+        ↓
+Lightweight specification
+        ↓
+Implementation plan
+        ↓
+Tests for the next behavior slice
+        ↓
+Small implementation slice
+        ↓
+Validation
+        ↓
+Repeat as needed
+        ↓
+Review and handoff
 ```
 
-Only artifacts required by the task should exist. They must remain outside the public toolkit when they contain project information.
+The specification should state:
 
-### Conversation context
+- functional behavior;
+- interfaces and data contracts;
+- failure behavior;
+- authorization or security expectations;
+- compatibility requirements;
+- observability requirements;
+- non-goals.
 
-Conversation history is temporary working memory. Use `/clear` when a stage is complete and its durable facts have been captured.
+## 6. Refactor workflow
 
-## 9. Skills architecture
+```text
+Define the structural problem
+        ↓
+Identify observable behavior
+        ↓
+Add or confirm characterization tests
+        ↓
+Choose one refactor boundary
+        ↓
+Apply a small structural change
+        ↓
+Run the same behavior tests
+        ↓
+Review for accidental behavior changes
+        ↓
+Repeat only while scope remains controlled
+```
 
-Skills represent bounded, repeatable procedures.
+Rules:
 
-### Initial Skill: `magento-start`
+- a refactor does not intentionally change business behavior;
+- suspicious existing behavior remains documented, not silently corrected;
+- behavior changes become separate bugfix or feature work;
+- broad modernization proposals do not justify broad edits.
 
-Responsibilities:
+## 7. Mechanical workflow
 
-- classify the intake mode;
-- normalize the request;
-- identify only material missing information;
-- establish constraints and non-goals;
-- recommend one next stage.
+Use for transformations with explicit rules and objective validation.
 
-It must not perform broad discovery or implementation.
+```text
+Exact scope
+   ↓
+Transformation rule
+   ↓
+Small-model execution
+   ↓
+Formatter / linter / focused tests
+   ↓
+Compact summary
+```
 
-### Initial Skill: `magento-discover`
+Examples:
 
-Responsibilities:
+- add or normalize PHPDoc;
+- apply a known coding-standard fix;
+- rename a symbol within an authorized boundary;
+- update a repetitive declaration;
+- classify deterministic validation failures.
 
-- inspect only authorized scope;
-- reconstruct relevant execution flow;
-- identify direct dependencies;
-- distinguish findings from hypotheses;
-- identify testing and validation entry points;
-- return a compact discovery artifact.
+Escalate to another mode if the task exposes behavioral ambiguity.
 
-It must not modify source code.
+## 8. Characterization workflow for legacy code
 
-### Later Skills
+Before changing a legacy component:
 
-- `magento-plan`;
-- `magento-tdd`;
-- `magento-phpdoc`;
-- `magento-validate`;
-- `magento-module-review`.
+1. identify its external inputs;
+2. identify outputs and side effects;
+3. find existing tests and operational evidence;
+4. capture representative normal behavior;
+5. capture boundary and failure behavior;
+6. label suspected defects rather than normalizing them;
+7. confirm which behavior is contractually required;
+8. refactor only behind the resulting safety net.
 
-Each Skill is added only after its workflow has repeated enough to expose a stable contract.
+Characterization tests are particularly valuable for:
 
-## 10. Agents architecture
+- observers and plugins;
+- cron jobs;
+- imports and integrations;
+- queue consumers;
+- inventory calculations;
+- pricing rules;
+- custom checkout behavior;
+- legacy controllers;
+- filesystem and database state machines.
 
-No custom Agent is included initially.
+## 9. Validation workflow
 
-Use the main session when discovery, planning, implementation, and testing depend on shared context. A separate Agent is justified when isolation itself adds value.
+Run the narrowest useful checks first:
 
-The first expected Agent is a read-only `magento-reviewer`:
+```text
+syntax / compile-level check
+        ↓
+focused unit or integration tests
+        ↓
+static analysis
+        ↓
+coding standards
+        ↓
+broader regression checks when risk requires them
+```
 
-- fresh context;
-- Sonnet High by default;
-- read/search tools only;
-- no source modification;
-- no Git;
-- findings prioritized by severity with concrete evidence.
+Tool output should retain failures and actionable context, not thousands of successful lines.
 
-An always-on architect Agent is not planned. Use Opus in the main session for the occasional high-risk architectural decision.
+The handoff distinguishes:
 
-## 11. Control and security boundaries
+- passed checks;
+- failed checks;
+- skipped checks;
+- checks unavailable in the current environment;
+- residual risk.
 
-### Git
+## 10. Review workflow
 
-All Git and GitHub CLI operations are user-owned. This must be enforced through permissions rather than conversational instructions alone.
+An independent review is justified when:
 
-### Auto Memory
+- the change is security-sensitive;
+- inventory, price, order, payment, or customer behavior is affected;
+- the implementation required complex assumptions;
+- the change crosses module boundaries;
+- legacy behavior is poorly documented;
+- a fresh reviewer is likely to detect shared implementation bias.
 
-Auto Memory is disabled for controlled workflows. Durable context must be deliberate and auditable.
+Review priorities:
 
-### Hooks
+1. correctness and regressions;
+2. security and data exposure;
+3. concurrency and failure behavior;
+4. compatibility;
+5. Magento framework conventions;
+6. maintainability;
+7. unnecessary changes.
 
-No Hooks are included in `0.1.0`. They may be introduced after a deterministic policy has proved useful and their output cost is understood.
+Review output uses `Critical`, `High`, `Medium`, and `Low`, with exact evidence and a concrete impact.
 
-### MCP and external integrations
+## 11. Context reset workflow
 
-No integration is included by default. Add one only when it removes repeated work and its schema, permissions, and context cost are justified.
+Use `/clear` after completing a stage only when the next stage no longer needs the detailed conversation.
 
-## 12. Version boundary
+Before clearing, capture:
 
-Version `0.1.0` is complete when:
+- verified facts;
+- decisions;
+- acceptance criteria;
+- relevant files and symbols;
+- constraints;
+- validation commands;
+- unresolved questions;
+- the next action.
 
-- documentation and templates are internally consistent;
-- `magento-start` has a stable intake contract;
-- `magento-discover` has a stable read-only contract;
-- manual installation has been tested;
-- one authorized pilot has produced token and quality measurements;
-- client information has remained outside the public repository.
+Suggested boundaries:
+
+```text
+intake → discovery
+discovery → planning
+planning → implementation
+implementation → independent review
+```
+
+Do not clear merely because a fixed number of turns has elapsed.
+
+If the next stage uses the same model and effort, `/clear` is sufficient after the handoff has been captured. If the route changes, prefer a new session launched with `--model` and `--effort`; this keeps global settings neutral and makes the stage configuration reproducible.
+
+## 12. Handoff contract
+
+Every completed implementation handoff should answer:
+
+- What changed?
+- Why was it necessary?
+- What behavior is now protected?
+- Which checks passed?
+- What could not be validated?
+- What risks remain?
+- What Git actions should the user consider?
+
+The assistant may recommend Git commands but must not execute them.

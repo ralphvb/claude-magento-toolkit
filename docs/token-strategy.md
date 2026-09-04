@@ -1,7 +1,7 @@
 # Token Strategy
 
 **Version:** `0.1.0`  
-**Status:** initial measurable policy
+**Status:** measured DIAGNOSTIC non-blocking intake path; remaining intake and discovery measurements are pending
 
 ## 1. Objective
 
@@ -30,19 +30,41 @@ A short prompt can still produce an expensive workflow if it causes broad explor
 
 ## 3. Baseline evidence
 
-An initial Claude Code session observed approximately:
+An initial clean Claude Code session and the later training-project pilot observed approximately:
 
-| Component | Context share |
-|---|---:|
-| System prompt | 0.4% |
-| Tools | 2.6% |
-| Skills | 0.2% |
-| Total initially used | 3–4% |
-| Free context | approximately 96% |
+| Component | Initial observation | Intake pilot |
+|---|---:|---:|
+| System prompt | 0.4% | 3.5k tokens / 0.4% |
+| Tools | 2.6% | 16.7k tokens / 1.7% |
+| Explicit memory files | none before `/init` | 5.1k tokens / 0.5% |
+| Skills | 0.2% | 2.6k tokens / 0.3% |
+| Total initially used | 3–4% | 28k / 967k tokens / 3% |
+| Free context | approximately 96% | approximately 93.7% |
 
 The same experiment observed that conversational messages increased after initialization and returned to zero after `/clear`.
 
 These values are environment-specific. Their value is methodological: measure real sessions instead of optimizing from intuition alone.
+
+### 3.1 `magento-start` pilot
+
+Repeated runs used the same bounded DIAGNOSTIC request while model, effort, and Skill size were varied:
+
+| Route and version | Output tokens | Cache write | Cost |
+|---|---:|---:|---:|
+| Explicit Opus, pre-compaction | 887 | 34.9k | `$0.3713` |
+| Default Sonnet, pre-compaction | 856 | 35.1k | `$0.2234` |
+| Sonnet High, compact Skill | 907 | 37.1k | `$0.2365` |
+| Sonnet Medium, compact Skill | 718 | 37.3k | `$0.2345` |
+
+These are local observations, not controlled pricing benchmarks. Cache state, runtime context, and adaptive reasoning varied between runs.
+
+The useful findings are directional:
+
+- Sonnet cost materially less than the observed Opus run for equivalent intake quality.
+- Medium effort reduced output versus the observed High run, while total cost changed little because cache writes dominated.
+- Reducing `magento-start` from 1,135 to 748 words improved its permanent design quality but did not guarantee a cheaper individual run.
+- The `/usage` percentage attributed to a Skill is cumulative local-session telemetry, not a per-run token breakdown.
+- Repeating a stable test can cost more than the additional evidence is worth.
 
 ## 4. Optimization priorities
 
@@ -105,6 +127,16 @@ A task artifact should prevent the implementation or reviewer from rediscovering
 
 ## 5. Model routing
 
+Do not set `model` or `effortLevel` globally. A global route applies to unrelated projects and may prevent a workflow from using the least expensive adequate model.
+
+Use Skill or Agent frontmatter to declare intent. Treat it as preferred routing rather than unverified runtime fact. At a stage boundary, use session-scoped flags when deterministic routing matters:
+
+```bash
+claude --model <model> --effort <level>
+```
+
+If the active session already matches the recommendation, do not change it. Use `/usage` to verify the model actually used. Effort telemetry may require confirmation from the active runtime indicator.
+
 ### Haiku
 
 Use for:
@@ -155,6 +187,8 @@ A Skill is token-efficient when it:
 - references additional material only when necessary;
 - produces a small durable artifact.
 
+Manually invoked workflow Skills should normally use `disable-model-invocation: true`. This keeps their descriptions out of normal context until the user invokes them.
+
 Do not create a Skill after observing a task once. A good candidate is repetitive, stable, bounded, and easy to validate.
 
 ## 7. Agents policy
@@ -189,7 +223,9 @@ Local configuration is not distributed in the public repository.
 
 ## 9. Git policy
 
-Claude does not execute Git or GitHub CLI commands. This prevents Git output, repository history, and remote operations from entering the workflow unless the user deliberately supplies them.
+Toolkit workflows do not execute Git or GitHub CLI commands. This prevents Git output, repository history, and remote operations from entering the workflow unless the user deliberately supplies them.
+
+This workflow policy is independent of machine configuration. A work profile should deny Git and GitHub CLI commands used by Claude. A personal profile may retain those permissions for non-toolkit workflows such as training. The public toolkit does not distribute either profile, and an available permission does not change the toolkit's stop-before-Git contract.
 
 The user owns:
 
