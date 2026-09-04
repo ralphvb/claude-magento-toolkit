@@ -55,10 +55,10 @@ A gap is blocking only if its answer could materially change the mode, authorize
 If blocked:
 
 - list one to three concise questions under `Blocking Gaps`;
-- use `Complete intake` as the stage;
+- use `Complete intake` as the Stage;
 - use `No change` as both the model and effort;
 - explain that required information could materially change the work;
-- use `Not applicable until intake is complete.` as the routing gate;
+- use `Human confirmation required: verify No change / No change before approving the next stage.` as the routing gate;
 - use exactly this suggested action: `Answer the blocking questions above, then rerun /magento-start with the completed request.`;
 - stop without applying the routing rules in section 4.
 
@@ -66,13 +66,22 @@ Otherwise write `Blocking gaps: None` and continue to section 4.
 
 ## 4. Next stage and routing
 
-Recommend exactly one stage:
+`MODE` and `Stage` are separate concepts. `Stage` must use exactly one value from this closed set and must never contain a Mode value such as `DIAGNOSTIC` or `BUGFIX`:
 
-- `DIAGNOSTIC` → bounded read-only discovery;
-- `BUGFIX` → reproduction, or bounded discovery when the cause is unknown;
-- `FEATURE` → lightweight specification;
-- `REFACTOR` → characterization of current behavior;
-- `MECHANICAL` → bounded transformation with deterministic validation.
+- `Complete intake`
+- `bounded read-only discovery`
+- `Reproduction`
+- `Lightweight specification`
+- `Characterization of current behavior`
+- `Bounded transformation with deterministic validation`
+
+Recommend exactly one Stage:
+
+- `DIAGNOSTIC` → `bounded read-only discovery` exactly;
+- `BUGFIX` → `Reproduction`, or `bounded read-only discovery` when the cause is unknown;
+- `FEATURE` → `Lightweight specification`;
+- `REFACTOR` → `Characterization of current behavior`;
+- `MECHANICAL` → `Bounded transformation with deterministic validation`.
 
 Choose the least expensive reliable route:
 
@@ -86,7 +95,7 @@ The routing reason may mention only stated scope, ambiguity, risk, and work type
 Use this routing gate exactly, replacing only the placeholders:
 
 ```text
-Verify that the active session uses <MODEL> with <EFFORT> effort. If it does not, change it manually before approving the next stage.
+Human confirmation required: verify <MODEL> / <EFFORT> before approving the next stage.
 ```
 
 Use exactly one suggested action without replacing or appending text:
@@ -137,3 +146,11 @@ Use exactly this structure:
 ```
 
 Use `High`, `Medium`, or `Low` confidence. Keep the response under approximately 400 words unless the user requests more. Stop after the recommendation and wait for confirmation.
+
+Before responding, silently check output conformance:
+
+- all required headings are present;
+- exactly one next stage is recommended;
+- the Stage is valid for this Skill;
+- the routing gate uses the canonical form;
+- no incomplete words, placeholders, or contradictory alternatives remain.

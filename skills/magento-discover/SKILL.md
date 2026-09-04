@@ -42,6 +42,8 @@ If approval is absent, a required field is missing, `MODE` is invalid, or `SCOPE
 - Suggested action:
 ```
 
+Identify only the invalid or missing input and the action needed to correct it. Do not infer a likely `MODE` or provide task analysis.
+
 Treat project instructions as operating constraints, not as evidence of application behavior.
 
 ## 2. Define evidence questions
@@ -83,9 +85,10 @@ Use these rules:
 - `Unknown`: cannot be resolved within the approved repository scope.
 - User-provided statements remain `Provided`, not `Verified`, until repository evidence corroborates them.
 - A hypothesis may be `Supported`, `Contradicted`, or `Inconclusive`; `Supported` does not mean a root cause is proven.
-- Cite exact paths with line numbers and symbols or configuration keys.
+- Every `Verified` evidence item must cite the exact path, line or line range, and relevant symbol or configuration key. If any required citation element is unavailable, classify the claim as `Potential` or `Unknown`.
 - Preserve conflicting evidence instead of resolving it through assumption.
 - Use Magento conventions only to guide a search, never as evidence of this repository's behavior.
+- Uninspected framework or dependency behavior must not be described as stable, assumed, or verified. Report it only as an evidence gap, `Potential`, or `Unknown`.
 - Qualify every absence claim with the bounded search that was performed.
 - Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
 
@@ -113,7 +116,7 @@ Use exactly this structure:
 ### E1 — <concise claim>
 
 - Classification: Verified
-- Evidence: <path:line and symbol or configuration key>
+- Evidence: <exact path:line or line range; relevant symbol or configuration key>
 - Relevance:
 
 ## Hypotheses
@@ -148,14 +151,29 @@ Use exactly this structure:
 
 Use `None` where a section has no applicable content. Prefer evidence references over repeated explanations or source excerpts. Recommend exactly one next stage and stop for human confirmation.
 
-Choose the earliest justified next stage without performing it:
+`MODE` and `Stage` are separate concepts. A Stage must never contain a Mode value such as `DIAGNOSTIC` or `BUGFIX`.
 
-- unresolved observed behavior → reproduction;
-- defined new behavior → lightweight specification;
-- legacy behavior that must be preserved → characterization;
-- deterministic mechanical change → bounded transformation with deterministic validation;
-- evidence that requires a scope decision → human scope decision;
-- resolved diagnostic scope → human scope decision.
+Choose the first matching row in this prioritized next-stage decision table without performing the stage:
+
+| Priority | Condition | Stage | Model | Effort | Suggested action |
+| --- | --- | --- | --- | --- | --- |
+| 1 | Repository evidence resolves the approved static discovery question, but any further action would require new authorization. | `Human scope decision` | `No change` | `No change` | `Wait for human scope approval before starting another stage.` |
+| 2 | The next evidence needed would materially expand the approved scope. | `Human scope decision` | `No change` | `No change` | `Wait for human scope approval before starting another stage.` |
+| 3 | The approved intake contains an actual observed runtime behavior that cannot be resolved through authorized repository evidence. | `Reproduction` | Apply routing rules below. | Apply routing rules below. | Ask for human approval to reproduce the observed runtime behavior within the approved scope. |
+| 4 | Approved new behavior is sufficiently defined for specification. | `Lightweight specification` | Apply routing rules below. | Apply routing rules below. | Ask for human approval to begin lightweight specification within the approved scope. |
+| 5 | Approved legacy behavior must be preserved. | `Characterization of current behavior` | Apply routing rules below. | Apply routing rules below. | Ask for human approval to characterize current behavior within the approved scope. |
+| 6 | The approved task is a deterministic mechanical change. | `Bounded transformation with deterministic validation` | Apply routing rules below. | Apply routing rules below. | Ask for human approval to perform the bounded transformation and its deterministic validation. |
+
+For priority 1, use exactly:
+
+```text
+- Stage: Human scope decision
+- Model: No change
+- Effort: No change
+- Suggested action: Wait for human scope approval before starting another stage.
+```
+
+Recommend `Reproduction` only under priority 3. A static hypothesis that remains unconfirmed at runtime is not, by itself, a reason to recommend `Reproduction`.
 
 Choose the least expensive reliable route for that next stage:
 
@@ -167,7 +185,15 @@ Choose the least expensive reliable route for that next stage:
 The next-stage model and effort are recommendations, not confirmed runtime state. Never claim this Skill changed the route for a later turn. Use this routing gate, replacing only the placeholders:
 
 ```text
-Verify that the active session uses <MODEL> with <EFFORT> effort. If it does not, change it manually before approving the next stage.
+Human confirmation required: verify <MODEL> / <EFFORT> before approving the next stage.
 ```
 
 Stop after the recommendation and wait for human confirmation.
+
+Before responding, silently check output conformance:
+
+- all required headings are present;
+- exactly one next stage is recommended;
+- the Stage is valid for this Skill;
+- the routing gate uses the canonical form;
+- no incomplete words, placeholders, or contradictory alternatives remain.
