@@ -1,7 +1,7 @@
 # Workflows
 
 **Version:** `0.1.0`  
-**Status:** DIAGNOSTIC non-blocking intake path validated; remaining intake paths and workflow capabilities are pending
+**Status:** DIAGNOSTIC non-blocking intake path validated; v0.1 Skill tool-boundary correction pending pilot; remaining intake paths and workflow capabilities are pending
 
 ## 1. General rules
 
@@ -111,7 +111,22 @@ verify the recommended model and effort
 review evidence and choose the next stage
 ```
 
-`magento-discover` remains planned. Its contract is to use an explicitly verified route, perform bounded read-only inspection, and stop without implementing its recommendations.
+`magento-discover` is implemented for the v0.1 pilot. Its contract is to use an explicitly verified route, perform bounded read-only inspection, and stop without implementing its recommendations.
+
+### 3.1 Skill tool-enforcement boundary
+
+The pilot requires Claude Code `2.1.236`, the version against which the canonical built-in tool names and Skill-local `disallowed-tools` behavior were reviewed. This is a pilot prerequisite, not a general minimum-version guarantee. Run the pilot without separately configured MCP servers or connectors: their direct tool names are installation-specific, and this toolkit neither configures them nor uses wildcard deny rules.
+
+`magento-start` explicitly denies every reviewed built-in tool that can inspect repository content, execute commands, mutate state, delegate work, invoke another Skill, enter or exit a worktree, or reach network, external, or MCP resources. `magento-discover` uses the same named-denial approach while retaining only `Read`, `Glob`, and `Grep` for direct repository inspection. Claude Code reserves `EndConversation` while any other tool remains, so it is not treated as a workflow capability or listed as an enforceable denial.
+
+Named tool denials are deterministic only during the turn that invokes the Skill. They do not semantically validate intake. Validation before reads, scope discipline, evidence quality, and stop conditions remain prompt- and human-enforced. A later user message clears the Skill-local restrictions. Unsupported or future Claude Code tools require a supported-version review before the pilot version changes.
+
+Pilot checklist:
+
+- On Claude Code `2.1.236`, invoke `/magento-start` and verify its named denied tools are unavailable.
+- Invoke `/magento-discover` with approved input and verify that only `Read`, `Glob`, and `Grep` are available for its repository work.
+- Invoke `/magento-discover` with invalid input and record a blocked response without reads as a behavioral result, not as a deterministic no-read guarantee.
+- Send a later user message and verify that the Skill-local restrictions have cleared and the session's baseline tool availability has resumed.
 
 ## 4. Bugfix workflow
 
