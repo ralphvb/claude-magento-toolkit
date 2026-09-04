@@ -1,7 +1,7 @@
 # Workflows
 
 **Version:** `0.1.0`  
-**Status:** DIAGNOSTIC non-blocking intake path validated; v0.1 Skill tool-boundary correction pending pilot; remaining intake paths and workflow capabilities are pending
+**Status:** v0.1 Skills implemented; end-to-end and tool-boundary pilots pending; remaining workflow capabilities planned
 
 ## 1. General rules
 
@@ -123,6 +123,7 @@ Named tool denials are deterministic only during the turn that invokes the Skill
 
 Pilot checklist:
 
+- Confirm that no MCP servers or connectors are configured for the session; direct installation-specific MCP tool names are not covered by the named Skill-level denials.
 - On Claude Code `2.1.236`, invoke `/magento-start` and verify its named denied tools are unavailable.
 - Invoke `/magento-discover` with approved input and verify that only `Read`, `Glob`, and `Grep` are available for its repository work.
 - Invoke `/magento-discover` with invalid input and record a blocked response without reads as a behavioral result, not as a deterministic no-read guarantee.
