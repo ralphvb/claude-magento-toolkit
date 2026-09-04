@@ -1,0 +1,173 @@
+---
+name: magento-discover
+description: Perform bounded, evidence-based, read-only repository discovery for a human-approved Magento Open Source or Adobe Commerce task and recommend one next stage.
+argument-hint: "[approved normalized request]"
+disable-model-invocation: true
+model: sonnet
+effort: medium
+---
+
+# Magento Discover
+
+Use `$ARGUMENTS` as the approved intake. Respond in English. Preserve identifiers, paths, commands, and product names exactly as provided.
+
+## Discovery boundary
+
+This Skill performs bounded, read-only repository discovery only. Do not reclassify or expand the intake, modify files, use Git or GitHub, reproduce behavior, write specifications or plans, implement, refactor, test, validate, or review. Do not run commands that can change state, generate artifacts or caches, access a database or external service, or expose secrets.
+
+Do not write task-specific findings into this public toolkit. Keep discovery results in the response or in a separately authorized private artifact.
+
+## 1. Preflight
+
+Before using any tool, require these non-empty fields:
+
+- `APPROVED: yes`
+- `MODE`
+- `TASK`
+- `SCOPE`
+- `CONSTRAINTS`
+- `EXPECTED DELIVERABLE`
+- `NON-GOALS`
+
+Accept fields as labels or headings in a normalized request. `MODE` must be exactly one of `DIAGNOSTIC`, `BUGFIX`, `FEATURE`, `REFACTOR`, or `MECHANICAL`.
+
+`SCOPE` must identify at least one concrete module, domain, path, interface, or execution-flow anchor. Optional intake fields are `BUSINESS CONTEXT`, `KNOWN SYMPTOMS`, `KNOWN FACTS`, `HYPOTHESES TO VERIFY`, `ACCEPTANCE CRITERIA`, `VALIDATION`, and `OPEN QUESTIONS`.
+
+If approval is absent, a required field is missing, `MODE` is invalid, or `SCOPE` has no concrete anchor, use only this structure and stop without inspecting anything:
+
+```markdown
+## Discovery Blocked
+
+- Missing or invalid input:
+- Suggested action:
+```
+
+Treat project instructions as operating constraints, not as evidence of application behavior.
+
+## 2. Define evidence questions
+
+Convert the approved task, known symptoms, and hypotheses into the smallest useful set of evidence questions. Do not add business requirements, implementation mechanisms, or Magento conventions to the approved facts or scope.
+
+Use the named scope plus directly connected execution dependencies as the default boundary. Do not follow second-order dependencies unless the approved question cannot otherwise be answered.
+
+## 3. Inspect minimally
+
+1. Start with exact paths and identifiers supplied in the scope. Otherwise use narrowly constrained filename or symbol searches.
+2. Inspect only Magento wiring required by the evidence questions, such as module configuration, dependency injection, events, plugins, routes, cron, queues, persistence, or API declarations.
+3. Trace the shortest relevant execution path through direct dependencies. If evidence requires crossing the named scope, record the reason and keep the expansion minimal.
+4. Inspect adjacent tests and configuration only as existing evidence. Do not execute tests or other validation.
+5. Prefer small line-numbered excerpts, exact symbols, focused searches, and summarized command output. Do not dump complete files, logs, dependency trees, or broad repository listings.
+
+Do not use Git or GitHub commands, network access, package managers, databases, external services, generated directories, caches, logs, credentials, or secrets.
+
+## 4. Stop conditions
+
+Stop discovery when any of these conditions applies:
+
+- the evidence questions are answered;
+- the next useful action belongs to reproduction, specification, implementation, validation, or review;
+- further work would materially expand the approved scope;
+- required evidence exists only in an external system, runtime environment, database, log, credential, or stakeholder knowledge;
+- the next command could modify state or generate artifacts;
+- additional reading would add background rather than decision-relevant evidence.
+
+Report incomplete work as `Partial` or `Blocked`; do not cross the boundary to obtain a more complete answer.
+
+## 5. Evidence and uncertainty
+
+Use these rules:
+
+- `Verified`: directly supported by inspected repository evidence.
+- `Potential`: plausible but not established.
+- `Technical debt`: a maintainability or compatibility concern without proof of a functional defect.
+- `Unknown`: cannot be resolved within the approved repository scope.
+- User-provided statements remain `Provided`, not `Verified`, until repository evidence corroborates them.
+- A hypothesis may be `Supported`, `Contradicted`, or `Inconclusive`; `Supported` does not mean a root cause is proven.
+- Cite exact paths with line numbers and symbols or configuration keys.
+- Preserve conflicting evidence instead of resolving it through assumption.
+- Use Magento conventions only to guide a search, never as evidence of this repository's behavior.
+- Qualify every absence claim with the bounded search that was performed.
+- Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
+
+## 6. Output
+
+Use exactly this structure:
+
+```markdown
+## Discovery Status
+
+- Outcome: Complete | Partial | Blocked
+- Mode:
+- Discovery question:
+- Scope inspected:
+- Scope not inspected:
+- Files inspected:
+- Commands executed:
+
+## Executive Summary
+
+## Architecture and Execution Flow
+
+## Evidence
+
+### E1 — <concise claim>
+
+- Classification: Verified
+- Evidence: <path:line and symbol or configuration key>
+- Relevance:
+
+## Hypotheses
+
+### <hypothesis>
+
+- Status: Supported | Contradicted | Inconclusive
+- Evidence references:
+- Missing evidence:
+
+## Findings
+
+### <finding>
+
+- Classification: Verified | Potential | Technical debt | Unknown
+- Impact:
+- Evidence references:
+
+## Constraints and Limitations
+
+## Evidence Gaps and Validation Needed
+
+## Recommended Next Stage
+
+- Stage:
+- Model:
+- Effort:
+- Reason:
+- Routing gate:
+- Suggested action:
+```
+
+Use `None` where a section has no applicable content. Prefer evidence references over repeated explanations or source excerpts. Recommend exactly one next stage and stop for human confirmation.
+
+Choose the earliest justified next stage without performing it:
+
+- unresolved observed behavior → reproduction;
+- defined new behavior → lightweight specification;
+- legacy behavior that must be preserved → characterization;
+- deterministic mechanical change → bounded transformation with deterministic validation;
+- evidence that requires a scope decision → human scope decision;
+- resolved diagnostic scope → human scope decision.
+
+Choose the least expensive reliable route for that next stage:
+
+- bounded discovery, normal implementation, or tests → `Sonnet`, `Medium`;
+- difficult debugging, high ambiguity, or independent review → `Sonnet`, `High`;
+- cross-cutting architecture, critical integrations, or high-risk legacy decisions → `Opus`, `High`;
+- mechanical deterministic work → `Haiku`, `Low`.
+
+The next-stage model and effort are recommendations, not confirmed runtime state. Never claim this Skill changed the route for a later turn. Use this routing gate, replacing only the placeholders:
+
+```text
+Verify that the active session uses <MODEL> with <EFFORT> effort. If it does not, change it manually before approving the next stage.
+```
+
+Stop after the recommendation and wait for human confirmation.
