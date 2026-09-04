@@ -1,6 +1,6 @@
 ---
 name: magento-start
-description: Classify and normalize a Magento Open Source or Adobe Commerce work request, identify material gaps, and recommend one controlled next stage.
+description: Classify and normalize a Magento Open Source or Adobe Commerce request, identify blocking gaps, and recommend one next stage.
 argument-hint: "[task description]"
 disable-model-invocation: true
 model: sonnet
@@ -9,137 +9,83 @@ effort: medium
 
 # Magento Start
 
-Use `$ARGUMENTS` as the initial work request.
+Use `$ARGUMENTS` as the request. Respond in English. Preserve identifiers, paths, commands, and product names exactly as provided. If `$ARGUMENTS` is empty, ask for the task and stop.
 
-Always respond in English, regardless of the language used in the request. Preserve code identifiers, paths, commands, and product names exactly as provided.
+## Intake boundary
 
-## Intake source
+This Skill performs intake only. Do not read files, inspect the repository, run tools or commands, modify anything, invoke Skills or agents, use Git/GitHub, or start discovery, planning, testing, or implementation.
 
-Use only the information explicitly provided in `$ARGUMENTS` and the current invocation as the factual source for intake.
+Treat only `$ARGUMENTS` and information explicitly supplied in this invocation as factual input. Ignore `CLAUDE.md`, Memory files, repository summaries, previous conversations, and previously discovered information in every output section.
 
-Ignore automatically loaded project context, including:
+Every path, file, class, command, configuration, business rule, and implementation mechanism must be traceable to `$ARGUMENTS`. Otherwise omit it. Never turn inherited context or Magento conventions into facts, hypotheses, validation, non-goals, reasoning, or suggested actions.
 
-- `CLAUDE.md` content;
-- Memory files;
-- repository summaries;
-- previously discovered project information;
-- prior task or conversation details not repeated in the current invocation.
+## 1. Classify
 
-Do not mention, summarize, or convert that background context into `KNOWN FACTS`, `SCOPE`, `BUSINESS CONTEXT`, or `OPEN QUESTIONS`. Repository evidence belongs to the discovery stage.
+Choose exactly one mode matching the deliverable:
 
-## Boundary
-
-This Skill performs intake only.
-
-Do not:
-
-- inspect the repository or read files;
-- modify files;
-- run commands or tools;
-- invoke another Skill or subagent;
-- perform Git or GitHub operations;
-- begin discovery, planning, testing, or implementation;
-- invent project facts, paths, commands, requirements, or business rules;
-- introduce file names, implementation details, documentation claims, or missing-file claims that were not provided in the current invocation;
-- treat hypotheses as verified findings;
-- request or reproduce credentials, secrets, or private customer data.
-
-If `$ARGUMENTS` is empty, ask the user to describe the task and stop.
-
-## 1. Classify the request
-
-Choose exactly one primary mode:
-
-- `DIAGNOSTIC`: the cause, current behavior, or implementation scope is not sufficiently known.
-- `BUGFIX`: expected and observed behavior differ and a correction is requested.
+- `DIAGNOSTIC`: current behavior, cause, or scope must be discovered.
+- `BUGFIX`: observed and expected behavior differ and a correction is requested.
 - `FEATURE`: new business behavior is requested.
-- `REFACTOR`: internal structure should improve while preserving behavior.
-- `MECHANICAL`: the transformation is bounded, repetitive, low-ambiguity, and deterministically verifiable.
+- `REFACTOR`: structure should improve without changing behavior.
+- `MECHANICAL`: the change is repetitive, low-ambiguity, and deterministically verifiable.
 
-If more than one mode appears relevant, select the mode matching the immediate requested deliverable. Mention secondary concerns without creating additional workflows.
+Mention secondary concerns without creating parallel workflows.
 
-## 2. Normalize the intake
+## 2. Normalize
 
-Produce these fields:
-
-```text
-MODE
-TASK
-BUSINESS CONTEXT
-KNOWN SYMPTOMS
-SCOPE
-KNOWN FACTS
-HYPOTHESES TO VERIFY
-CONSTRAINTS
-ACCEPTANCE CRITERIA
-EXPECTED DELIVERABLE
-VALIDATION
-NON-GOALS
-OPEN QUESTIONS
-```
+Produce: `MODE`, `TASK`, `BUSINESS CONTEXT`, `KNOWN SYMPTOMS`, `SCOPE`, `KNOWN FACTS`, `HYPOTHESES TO VERIFY`, `CONSTRAINTS`, `ACCEPTANCE CRITERIA`, `EXPECTED DELIVERABLE`, `VALIDATION`, `NON-GOALS`, and `OPEN QUESTIONS`.
 
 Rules:
 
-- preserve the user's intent;
-- separate verified facts from hypotheses;
-- use `Not provided` when missing information should remain visible;
-- use only facts stated in the current invocation;
-- if the user names a module but not its path, preserve the module name without inventing a path;
-- place plausible mechanisms under `HYPOTHESES TO VERIFY`, clearly labeled as unverified;
-- do not infer requirements that could change behavior or scope;
-- keep each section concise;
-- do not repeat the same information across sections.
+- preserve intent and separate facts from hypotheses;
+- use `Not provided` for missing information;
+- preserve a named scope without resolving or expanding it;
+- include only user-provided hypotheses; otherwise use `Not provided`;
+- add the intake-only boundary to `CONSTRAINTS`, but invent no project constraint;
+- derive only acceptance criteria that restate the requested outcome, prefixed with `Derived from task:`;
+- make no assumption that could change scope or behavior;
+- avoid repetition and optional follow-up work.
 
-## 3. Identify blocking gaps
+Use `Open questions: None` when no relevant question remains.
 
-A gap is blocking only when its answer could materially change:
+## 3. Blocking gaps
 
-- the primary mode;
-- authorized scope;
-- expected behavior;
-- external compatibility;
-- security or data handling;
-- acceptance criteria;
-- the expected deliverable.
+A gap is blocking only if its answer could materially change the mode, authorized scope, expected behavior, compatibility, security/data handling, acceptance criteria, or deliverable. Ask at most three questions.
 
-Ask no more than three focused questions.
+If blocked, recommend `Complete intake` and stop. Otherwise write `Blocking gaps: None`.
 
-If blocking information is missing, recommend `Complete intake` as the next stage and stop.
-
-If no blocking answer is required, write:
-
-```text
-Blocking gaps: None
-```
-
-Keep non-blocking uncertainty under `OPEN QUESTIONS` only when it affects the recommended next stage.
-
-Do not invent optional follow-up work, documentation requests, deliverables, or questions that are not implied by the current invocation. If no relevant question remains, write:
-
-```text
-Open questions: None
-```
-
-## 4. Recommend one next stage
+## 4. Next stage and routing
 
 Recommend exactly one stage:
 
-- `DIAGNOSTIC` → bounded, read-only discovery;
-- `BUGFIX` → defect reproduction, or targeted discovery if the cause is unknown;
+- `DIAGNOSTIC` → bounded read-only discovery;
+- `BUGFIX` → reproduction, or bounded discovery when the cause is unknown;
 - `FEATURE` → lightweight specification;
 - `REFACTOR` → characterization of current behavior;
 - `MECHANICAL` → bounded transformation with deterministic validation.
 
-When `magento-discover` is appropriate, recommend `/magento-discover` but do not invoke it.
+Choose the least expensive reliable route:
 
-Recommend a model and effort level for that next stage:
+- bounded discovery, normal implementation, tests → `Sonnet`, `Medium`;
+- difficult debugging, high ambiguity, independent review → `Sonnet`, `High`;
+- cross-cutting architecture, critical integrations, high-risk legacy decisions → `Opus`, `High`;
+- mechanical deterministic work → `Haiku`, `Low`.
 
-- bounded discovery, normal implementation, and ordinary tests → `Sonnet`, `Medium`;
-- difficult debugging, high-ambiguity analysis, or independent review → `Sonnet`, `High`;
-- cross-cutting architecture, critical integrations, or high-risk legacy decisions → `Opus`, `High`;
-- bounded mechanical work with deterministic validation → `Haiku`, `Low`.
+The routing reason may mention only stated scope, ambiguity, risk, and work type. Model and effort are recommendations, not confirmed runtime state. Never claim this Skill changed them.
 
-Use the least expensive route that can reliably perform the work. State a one-sentence reason when recommending `Opus`.
+Use this routing gate exactly, replacing only the placeholders:
+
+```text
+Verify that the active session uses <MODEL> with <EFFORT> effort. If it does not, change it manually before approving the next stage.
+```
+
+Use exactly one suggested action without replacing or appending text:
+
+- discovery: `After confirming the routing gate, run /magento-discover using exactly the Scope stated above. Do not expand or resolve the scope during intake.`
+- reproduction: `After confirming the routing gate, reproduce the reported behavior using exactly the Scope and Acceptance Criteria stated above.`
+- specification: `After confirming the routing gate, begin lightweight specification using exactly the Normalized Request stated above.`
+- characterization: `After confirming the routing gate, characterize current behavior using exactly the Scope and Acceptance Criteria stated above.`
+- transformation: `After confirming the routing gate, perform the bounded transformation using exactly the Scope and Validation stated above.`
 
 ## 5. Output
 
@@ -155,29 +101,17 @@ Use exactly this structure:
 ## Normalized Request
 
 ### Mode
-
 ### Task
-
 ### Business Context
-
 ### Known Symptoms
-
 ### Scope
-
 ### Known Facts
-
 ### Hypotheses to Verify
-
 ### Constraints
-
 ### Acceptance Criteria
-
 ### Expected Deliverable
-
 ### Validation
-
 ### Non-Goals
-
 ### Open Questions
 
 ## Blocking Gaps
@@ -188,11 +122,8 @@ Use exactly this structure:
 - Model:
 - Effort:
 - Reason:
+- Routing gate:
 - Suggested action:
 ```
 
-Use `High`, `Medium`, or `Low` for classification confidence.
-
-Keep the complete response under approximately 500 words unless the user explicitly requests more detail.
-
-After presenting the normalized intake and one recommended next stage, stop and wait for user confirmation.
+Use `High`, `Medium`, or `Low` confidence. Keep the response under approximately 400 words unless the user requests more. Stop after the recommendation and wait for confirmation.
