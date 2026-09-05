@@ -122,18 +122,24 @@ Report incomplete work as `Partial` or `Blocked`; do not cross the boundary to o
 
 Use these rules:
 
-- `Verified`: directly supported by inspected repository evidence.
+- `Verified`: only a claim directly supported by inspected repository evidence. Cite the exact repository path, line or line range, and relevant symbol or configuration key. A directly inspected template binding, branch condition, configuration assignment, or module declaration can be `Verified` as a local code fact.
 - `Potential`: plausible but not established.
 - `Technical debt`: a maintainability or compatibility concern without proof of a functional defect.
 - `Unknown`: cannot be resolved within the approved repository scope.
 - User-provided statements remain `Provided`, not `Verified`, until repository evidence corroborates them.
 - A hypothesis may be `Supported`, `Contradicted`, or `Inconclusive`; `Supported` does not mean a root cause is proven.
-- Every `Verified` evidence item must cite the exact path, line or line range, and relevant symbol or configuration key. If any required citation element is unavailable, classify the claim as `Potential` or `Unknown`.
+- Do not use Magento conventions, JavaScript semantics beyond the inspected code, framework behavior, user statements, or absent results as sufficient evidence for a `Verified` application-behavior claim.
+- Behavior owned by an uninspected framework, runtime, external service, database, browser, configuration value, or direct dependency is `Potential` or `Unknown`. State the verified local code fact separately from its unverified downstream consequence.
+- Do not assert as `Verified` without inspecting its implementation: a UI-component configuration overriding a JavaScript default; rendered DOM behavior for an undefined text binding; or the runtime value, positivity, type coercion, timing, or reachability of a configuration or subtotal value.
+- A code-path gap is `Verified` only when inspected local code proves that gap. Its runtime impact, severity, reachability, and user-visible effect remain `Potential` or `Unknown` unless directly evidenced.
 - Preserve conflicting evidence instead of resolving it through assumption.
 - Use Magento conventions only to guide a search, never as evidence of this repository's behavior.
-- Uninspected framework or dependency behavior must not be described as stable, assumed, or verified. Report it only as an evidence gap, `Potential`, or `Unknown`.
+- Uninspected framework or dependency behavior must not be described as stable, assumed, or verified.
 - Qualify every absence claim with the bounded search that was performed.
 - Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
+- `Missing evidence` must list each material unresolved evidence need. Do not write `None within approved scope` while runtime, framework, configuration, dependency, or other material uncertainty remains.
+
+Keep `Scope inspected`, `Files inspected`, `Evidence`, and `Scope not inspected` internally consistent. List each inspected file in `Files inspected`, and cite it in `Evidence` only for claims it supports. If a direct dependency is named but its internals are not inspected, list it in `Scope not inspected` and explain why its internals were not needed to answer the approved static question.
 
 ## 6. Output
 
@@ -213,8 +219,11 @@ For priority 1, use exactly:
 - Stage: Human scope decision
 - Model: No change
 - Effort: No change
+- Routing gate: No model-routing change is requested.
 - Suggested action: Wait for human scope approval before starting another stage.
 ```
+
+For either `Human scope decision` row, the routing gate must say exactly `No model-routing change is requested.` Do not ask the user to verify a model or effort when both are `No change`.
 
 Recommend `Reproduction` only under priority 3. A static hypothesis that remains unconfirmed at runtime is not, by itself, a reason to recommend `Reproduction`.
 
@@ -225,7 +234,7 @@ Choose the least expensive reliable route for that next stage:
 - cross-cutting architecture, critical integrations, or high-risk legacy decisions → `Opus`, `High`;
 - mechanical deterministic work → `Haiku`, `Low`.
 
-The next-stage model and effort are recommendations, not confirmed runtime state. Never claim this Skill changed the route for a later turn. Use this routing gate, replacing only the placeholders:
+The next-stage model and effort are recommendations, not confirmed runtime state. Never claim this Skill changed the route for a later turn. For a stage other than `Human scope decision`, use this routing gate, replacing only the placeholders:
 
 ```text
 Human confirmation required: verify <MODEL> / <EFFORT> before approving the next stage.
@@ -238,5 +247,5 @@ Before responding, silently check output conformance:
 - all required headings are present;
 - exactly one next stage is recommended;
 - the Stage is valid for this Skill;
-- the routing gate uses the canonical form;
+- the routing gate is `No model-routing change is requested.` for `Human scope decision`, or uses the canonical form for another stage;
 - no incomplete words, placeholders, or contradictory alternatives remain.

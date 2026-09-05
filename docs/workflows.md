@@ -35,7 +35,7 @@ Business context, symptoms, known facts, and hypotheses should be added when the
 
 `magento-start` normalizes this information and recommends a single next stage, model, and effort level. It does not run the complete workflow automatically or claim that its recommendation changed the runtime.
 
-Before approving the next stage, the user verifies the active route and changes it only when it differs from the recommendation. This keeps routing visible without requiring a redundant selection at every boundary.
+Before approving a next stage other than `Human scope decision`, the user verifies the active route and changes it only when it differs from the recommendation. `Human scope decision` requests no model-routing change. This keeps routing visible without requiring a redundant selection at every boundary.
 
 Do not define `model` or `effortLevel` in global settings. Use three routing layers instead:
 
@@ -89,7 +89,7 @@ Required output properties:
 - defects separated from technical debt;
 - no source-code dump;
 - no implementation;
-- prioritized next steps.
+- one recommended next stage.
 
 Use `templates/diagnostic-assessment.md` for the result.
 
@@ -112,6 +112,10 @@ review evidence and choose the next stage
 ```
 
 `magento-discover` is implemented for the v0.1 pilot. Its contract is to use an explicitly verified route, perform bounded read-only inspection, and stop without implementing its recommendations.
+
+Its evidence contract distinguishes inspected local code facts from uninspected application behavior. `Verified` claims cite an exact repository path, line range, and relevant symbol or configuration key; framework, runtime, browser, external-service, database, configuration-value, or uninspected-dependency behavior remains `Potential` or `Unknown`. A verified local code-path gap does not by itself verify runtime impact, severity, reachability, or user-visible effect. Discovery reports must account consistently for inspected and uninspected scope, and must list material unresolved evidence rather than treating runtime or framework uncertainty as absent.
+
+When discovery recommends `Human scope decision`, its model and effort are both `No change` and its routing gate states that no model-routing change is requested. Other next stages retain the human route-verification gate.
 
 ### 3.1 Skill tool-enforcement boundary
 
