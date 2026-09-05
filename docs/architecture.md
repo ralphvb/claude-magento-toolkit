@@ -113,6 +113,20 @@ review evidence and choose the next stage
 
 `magento-discover` is implemented for the v0.1 pilot. Its contract is to use an explicitly verified route, perform bounded read-only inspection, and stop without implementing its recommendations.
 
+After human review, discovery may optionally be synthesized without repository access:
+
+```text
+human-reviewed discovery handoff
+        ↓
+/magento-assess <approved handoff>
+        ↓
+private technical diagnostic assessment
+        ↓
+human scope decision
+```
+
+`magento-assess` is manually invoked, accepts only an approved assessment objective and the supplied `Complete` or `Partial` discovery handoff, and performs tool-free terminal synthesis. It does not inspect the repository, automatically chain another stage, or replace the human scope decision. Its private output remains outside this public toolkit.
+
 Its evidence contract distinguishes inspected local code facts from uninspected application behavior. `Verified` claims cite an exact repository path, line range, and relevant symbol or configuration key; framework, runtime, browser, external-service, database, configuration-value, or uninspected-dependency behavior remains `Potential` or `Unknown`. A verified local code-path gap does not by itself verify runtime impact, severity, reachability, or user-visible effect. Discovery reports must account consistently for inspected and uninspected scope, and must list material unresolved evidence rather than treating runtime or framework uncertainty as absent.
 
 When the approved scope directly contains integration signals, `magento-discover` conditionally derives only the applicable evidence questions for the named entry point, boundary validation, durable state, work progression, Magento mutation, concurrency and failure handling, or observability. It starts at the named anchor and follows only direct execution dependencies needed to answer those questions; the signal does not authorize a repository-wide checklist, scope expansion, runtime access, or external-system inspection. Inspected selectors, counters, state transitions, writes, logs, and configuration references may verify narrower local code facts, while queue blockage, secret disclosure, lost work, duplicate updates, runtime races, business impact, and uninspected MSI behavior remain `Potential` or `Unknown`. Credential or secret values are never reported.
@@ -123,7 +137,7 @@ When discovery recommends `Human scope decision`, its model and effort are both 
 
 The pilot requires Claude Code `2.1.236`, the version against which the canonical built-in tool names and Skill-local `disallowed-tools` behavior were reviewed. This is a pilot prerequisite, not a general minimum-version guarantee. Run the pilot without separately configured MCP servers or connectors: their direct tool names are installation-specific, and this toolkit neither configures them nor uses wildcard deny rules.
 
-`magento-start` explicitly denies every reviewed built-in tool that can inspect repository content, execute commands, mutate state, delegate work, invoke another Skill, enter or exit a worktree, or reach network, external, or MCP resources. `magento-discover` uses the same named-denial approach while retaining only `Read`, `Glob`, and `Grep` for direct repository inspection. Claude Code reserves `EndConversation` while any other tool remains, so it is not treated as a workflow capability or listed as an enforceable denial.
+`magento-start` and `magento-assess` explicitly deny every reviewed built-in tool that can inspect repository content, execute commands, mutate state, delegate work, invoke another Skill, enter or exit a worktree, or reach network, external, or MCP resources. `magento-discover` uses the same named-denial approach while retaining only `Read`, `Glob`, and `Grep` for direct repository inspection. Claude Code reserves `EndConversation` while any other tool remains, so it is not treated as a workflow capability or listed as an enforceable denial.
 
 Named tool denials are deterministic only during the turn that invokes the Skill. They do not semantically validate intake. Validation before reads, scope discipline, evidence quality, and stop conditions remain prompt- and human-enforced. A later user message clears the Skill-local restrictions. Unsupported or future Claude Code tools require a supported-version review before the pilot version changes.
 

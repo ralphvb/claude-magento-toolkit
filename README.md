@@ -3,7 +3,7 @@
 Reusable, token-conscious workflows for developing, diagnosing, testing, and reviewing Magento Open Source and Adobe Commerce code with Claude Code.
 
 **Target version:** `0.1.0`  
-**Status:** DIAGNOSTIC non-blocking intake path validated; remaining intake paths and discovery are pending
+**Status:** Three manually invoked diagnostic Skills are implemented; end-to-end and tool-boundary pilots remain pending
 
 ## Purpose
 
@@ -18,7 +18,7 @@ This toolkit provides a small, auditable methodology for AI-assisted Magento dev
 - keep Git under human control;
 - preserve strict boundaries between generic methodology and client information.
 
-The toolkit is intentionally incremental. The current rollout has implemented and empirically validated the manually invoked `magento-start` Skill. `magento-discover` is the next planned capability in version `0.1.0`.
+The toolkit is intentionally incremental. It currently provides three manually invoked Skills: `magento-start` for tool-free intake, `magento-discover` for bounded read-only repository discovery, and `magento-assess` for tool-free synthesis of a human-reviewed discovery handoff into a private draft.
 
 ## Design principles
 
@@ -56,6 +56,10 @@ Human checkpoint
 magento-discover
    ↓
 Evidence / bounded context
+   ↓
+Optional magento-assess synthesis
+   ↓
+Human scope decision
    ↓
 Specification and plan when needed
    ↓
@@ -119,7 +123,10 @@ claude-magento-toolkit/
 ├── skills/
 │   ├── magento-start/
 │   │   └── SKILL.md
-│   └── magento-discover/        # planned for v0.1.0
+│   ├── magento-discover/
+│   │   └── SKILL.md
+│   └── magento-assess/
+│       └── SKILL.md
 ├── tests/
 │   └── magento-start/
 │       └── manual-validation.md
@@ -135,11 +142,13 @@ Install the Skills manually so the copied files remain easy to inspect:
 ```bash
 mkdir -p ~/.claude/skills
 cp -R skills/magento-start ~/.claude/skills/
+cp -R skills/magento-discover ~/.claude/skills/
+cp -R skills/magento-assess ~/.claude/skills/
 ```
 
 Review an existing destination before overwriting it. Restart Claude Code if the top-level personal `skills` directory did not exist when the session started.
 
-`magento-start` uses `disable-model-invocation: true`, so it remains unavailable to automatic model invocation and adds no skill-description cost until the user invokes it. Future workflow Skills should follow the same default unless automatic invocation provides measured value.
+All three Skills use `disable-model-invocation: true`, so they are manually invoked and unavailable to automatic model invocation. `magento-start` and `magento-assess` are tool-free during their invoking turns; `magento-discover` retains only direct repository-read tools. Named restrictions are turn-local, while input validation and evidence discipline remain prompt- and human-enforced.
 
 ## Usage
 
@@ -157,14 +166,25 @@ Then provide a bounded task description:
 
 Review the normalized intake, routing gate, and proposed next stage. The route is a recommendation; verify the active runtime and change it only when needed.
 
-Once `magento-discover` is implemented, a confirmed diagnostic can continue in a clean stage:
+A confirmed diagnostic can continue in a clean discovery stage:
 
 ```text
 /clear
 /magento-discover <confirmed normalized request and scope>
 ```
 
-The planned `magento-discover` Skill will use the active or explicitly routed session, perform bounded read-only discovery, and stop after recommending one next stage.
+`magento-discover` uses the active or explicitly routed session, performs bounded read-only discovery, and stops after recommending one next stage. Review its handoff before any further action.
+
+Optionally synthesize one human-reviewed `Complete` or `Partial` discovery handoff into a private assessment draft:
+
+```text
+/magento-assess ASSESSMENT APPROVED: yes
+ASSESSMENT OBJECTIVE: <objective>
+DISCOVERY HANDOFF:
+<complete human-reviewed magento-discover report>
+```
+
+`magento-assess` uses only the supplied arguments, performs no repository inspection, and stops at a human scope decision. Save its private output outside this public toolkit.
 
 ## Public repository boundary
 
