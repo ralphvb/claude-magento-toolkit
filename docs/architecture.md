@@ -147,6 +147,8 @@ Pilot checklist:
 - On Claude Code `2.1.236`, invoke `/magento-start` and verify its named denied tools are unavailable.
 - Invoke `/magento-discover` with approved input and verify that only `Read`, `Glob`, and `Grep` are available for its repository work.
 - Invoke `/magento-discover` with invalid input and record a blocked response without reads as a behavioral result, not as a deterministic no-read guarantee.
+- Invoke `/magento-assess` with an approved `Complete` or `Partial` handoff and verify its named tools are unavailable and its output remains a `Draft`.
+- Invoke `/magento-assess` with invalid input and verify `Assessment Blocked` is returned without synthesis.
 - Send a later user message and verify that the Skill-local restrictions have cleared and the session's baseline tool availability has resumed.
 
 ## 4. Bugfix workflow

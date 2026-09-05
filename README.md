@@ -216,10 +216,11 @@ The first rollout is deliberately small:
 3. document the token strategy;
 4. implement `magento-start`;
 5. implement `magento-discover`;
-6. install the Skills manually;
-7. run one authorized diagnostic pilot outside this repository;
-8. measure context, usage, quality, and unnecessary work;
-9. revise the toolkit from evidence.
+6. implement `magento-assess`;
+7. install the Skills manually;
+8. run one authorized diagnostic pilot outside this repository;
+9. measure context, usage, quality, and unnecessary work;
+10. revise the toolkit from evidence.
 
 No custom Agents, Hooks, MCP integrations, or automatic installer are included in `0.1.0`.
 
@@ -230,7 +231,8 @@ v0.1.0
 ├── architecture and workflow documentation
 ├── request and diagnostic templates
 ├── magento-start
-└── magento-discover
+├── magento-discover
+└── magento-assess
 
 v0.2.0
 ├── magento-plan
