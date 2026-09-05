@@ -142,10 +142,13 @@ Report incomplete work as `Partial` or `Blocked`; do not cross the boundary to o
 
 Use these rules:
 
+- Every `Classification` field in `Evidence` and `Findings` must contain exactly one canonical value: `Verified`, `Potential`, `Technical debt`, or `Unknown`. Do not add qualifiers, parentheses, slashes, conjunctions, or multiple classifications to the field.
 - `Verified`: only a claim directly supported by inspected repository evidence. Cite the exact repository path, line or line range, and relevant symbol or configuration key. A directly inspected template binding, branch condition, configuration assignment, or module declaration can be `Verified` as a local code fact.
 - `Potential`: plausible but not established.
 - `Technical debt`: a maintainability or compatibility concern without proof of a functional defect.
 - `Unknown`: cannot be resolved within the approved repository scope.
+- For a verified local code fact whose runtime reachability, severity, impact, or consequence is unresolved, use `Classification: Verified` and state the runtime uncertainty separately in `Impact`, `Relevance`, `Hypotheses`, `Evidence Gaps`, or prose as `Potential` or `Unknown`.
+- If a finding is a possible runtime consequence rather than a directly established local code fact, use `Classification: Potential` or `Classification: Unknown`.
 - User-provided statements remain `Provided`, not `Verified`, until repository evidence corroborates them.
 - A hypothesis may be `Supported`, `Contradicted`, or `Inconclusive`; `Supported` does not mean a root cause is proven.
 - Do not use Magento conventions, JavaScript semantics beyond the inspected code, framework behavior, user statements, or absent results as sufficient evidence for a `Verified` application-behavior claim.
@@ -155,7 +158,15 @@ Use these rules:
 - Preserve conflicting evidence instead of resolving it through assumption.
 - Use Magento conventions only to guide a search, never as evidence of this repository's behavior.
 - Uninspected framework or dependency behavior must not be described as stable, assumed, or verified.
-- Qualify every absence claim with the bounded search that was performed.
+- An absence claim is any application-behavior claim asserting or implying that a control, code path, guard, configuration, dependency, test, validation, or capability does not exist. This includes `no`, `none`, `only`, `sole`, `never`, `always`, `without`, `lacks`, `missing`, and equivalent negative implications.
+- Do not treat an inspected local method lacking a security, idempotency, replay, rate-limit, concurrency, or other control as proof that the control is absent from the approved scope or application.
+- An absence claim may be `Verified` only when the authorized, bounded search is sufficient for that exact claim. For every `Verified` absence claim, keep the following compactly in its existing `Evidence` item: the exact searched boundary; the paths or directories searched; the identifiers, filenames, configuration keys, or symbols searched; and the result of that bounded search. Do not require a repository-wide search or add an output heading.
+- If that bounded search was not performed or cannot establish the absence, state only the inspected positive local code fact and classify the broader absence as `Potential` or `Unknown`.
+- For security or integration controls outside an inspected boundary, use wording such as: “No additional control was identified within the inspected <bounded path/symbol set>; whether one exists elsewhere is Unknown.” Use this wording only when the bounded search is recorded.
+- Never infer absence from Magento conventions, framework expectations, runtime behavior, a single call site, or missing knowledge.
+- Do not use `only`, `sole`, `all`, `permanent`, `never`, `always`, or equivalent absolute or exclusivity language about application behavior unless the existing `Evidence` item records the authorized bounded search and its result.
+- When a claim concerns inspected local code, use bounded wording such as “the inspected method,” “the two inspected files,” “within the inspected execution path,” or “no exit was identified within the inspected path.” State any broader persistence, exclusivity, or application-wide consequence as `Potential` or `Unknown`.
+- Preserve valid direct code facts, such as a local method's absent cursor, a query's actual filters, a specific equality comparison, a specific missing branch, or a specific unguarded write call, without promoting them into repository-wide or control-wide claims.
 - Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
 - `Missing evidence` must list each material unresolved evidence need. Do not write `None within approved scope` while runtime, framework, configuration, dependency, or other material uncertainty remains.
 
@@ -184,7 +195,7 @@ Use exactly this structure:
 
 ### E1 — <concise claim>
 
-- Classification: Verified
+- Classification:
 - Evidence: <exact path:line or line range; relevant symbol or configuration key>
 - Relevance:
 
@@ -200,7 +211,7 @@ Use exactly this structure:
 
 ### <finding>
 
-- Classification: Verified | Potential | Technical debt | Unknown
+- Classification:
 - Impact:
 - Evidence references:
 
@@ -233,7 +244,7 @@ Choose the first matching row in this prioritized next-stage decision table with
 | 5 | Approved legacy behavior must be preserved. | `Characterization of current behavior` | Apply routing rules below. | Apply routing rules below. | Ask for human approval to characterize current behavior within the approved scope. |
 | 6 | The approved task is a deterministic mechanical change. | `Bounded transformation with deterministic validation` | Apply routing rules below. | Apply routing rules below. | Ask for human approval to perform the bounded transformation and its deterministic validation. |
 
-For priority 1, use exactly:
+For either `Human scope decision` row, use exactly:
 
 ```text
 - Stage: Human scope decision
@@ -243,7 +254,7 @@ For priority 1, use exactly:
 - Suggested action: Wait for human scope approval before starting another stage.
 ```
 
-For either `Human scope decision` row, the routing gate must say exactly `No model-routing change is requested.` Do not ask the user to verify a model or effort when both are `No change`.
+For either `Human scope decision` row, the routing gate must say exactly `No model-routing change is requested.` and the Suggested action must be exactly `Wait for human scope approval before starting another stage.` Do not append explanation, parenthetical text, alternatives, or additional instructions after the Suggested action. Do not ask the user to verify a model or effort when both are `No change`.
 
 Recommend `Reproduction` only under priority 3. A static hypothesis that remains unconfirmed at runtime is not, by itself, a reason to recommend `Reproduction`.
 
@@ -268,4 +279,7 @@ Before responding, silently check output conformance:
 - exactly one next stage is recommended;
 - the Stage is valid for this Skill;
 - the routing gate is `No model-routing change is requested.` for `Human scope decision`, or uses the canonical form for another stage;
+- every `Evidence` and `Finding` Classification field contains exactly one canonical classification with no qualifier or combined form;
+- when the Stage is `Human scope decision`, the Suggested action is exactly `Wait for human scope approval before starting another stage.` with no appended text;
+- every negative, absolute, permanence, or exclusivity claim about application behavior either contains the required bounded-search evidence or is rephrased as a bounded local fact plus a broader consequence marked `Potential` or `Unknown`;
 - no incomplete words, placeholders, or contradictory alternatives remain.
