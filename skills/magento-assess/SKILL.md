@@ -100,13 +100,27 @@ Identify only what must be corrected and the action needed to correct it. Do not
 
 - Synthesize only the supplied discovery handoff for the stated assessment objective.
 - Preserve its evidence references, classifications, inspected scope, excluded scope, constraints, conflicts, limitations, and uncertainty.
-- Never upgrade `Potential`, `Technical debt`, `Unknown`, a `Provided` statement, or a `Supported` hypothesis to `Verified`. `Supported` does not establish root cause.
-- Never invent severity, reachability, root cause, business impact, runtime behavior, framework behavior, configuration values, remediation facts, or validation results. If severity is unsupported, use `Unknown`.
+- Preserve material uncertainty and gaps from the handoff. Do not add a severity, root cause, risk, absence claim, remediation fact, runtime conclusion, business impact, framework behavior, configuration value, or validation result not explicitly supported by the handoff. If severity is unsupported, use `Unknown`.
 - Separate verified local code facts from operational risk and runtime uncertainty.
 - Include only evidence-backed risks or explicit unknowns. Do not add content to fill a section; use `None identified from the supplied handoff` where appropriate.
 - Do not quote source code or reproduce secrets. Prefer evidence references. Consolidate duplicate evidence only when every original reference remains traceable.
 - Progressive remediation may contain only conditional, decision-level directions, ordered from evidence confirmation through stabilization, resilience, and optional modernization.
 - Do not recommend or initiate another Skill or model route. Stop after the assessment and require a human scope decision.
+
+### Finding output mapping
+
+- The classification of every supplied discovery `Finding` is authoritative. Preserve it exactly in the assessment.
+- A verified `Evidence` item may explain a finding but must never upgrade that finding from `Potential`, `Technical debt`, or `Unknown` to `Verified`.
+- Do not create a new assessment finding solely from a supplied `Evidence` item or `Hypothesis` when the discovery handoff did not present it as a `Finding`.
+- Evidence-only local code facts may be summarized in `Architecture`, `Execution Flow`, `Evidence and Limitations`, or `Security and Operational Risks`, with their material uncertainty preserved. Do not convert them into a new finding classification.
+- Represent every material supplied discovery `Finding` exactly once in the area selected by its supplied classification:
+  - `Verified` → Section 7, `Verified Findings`.
+  - `Potential` or `Unknown` → Section 8, `Potential Findings to Validate`.
+  - `Technical debt` → Section 10, `Technical Debt`.
+- Preserve the supplied evidence references for every represented finding.
+- A source finding phrased as `Verified code fact; runtime impact Potential` remains `Verified` only for the local code fact. Preserve its impact or reachability as `Potential` or `Unknown`.
+- Use exactly one classification label per assessment finding: `Verified`, `Potential`, `Technical debt`, or `Unknown`. Never output combined labels such as `Potential / Unknown`.
+- A hypothesis status (`Supported`, `Contradicted`, or `Inconclusive`) is not a finding classification and must not be silently converted into one. `Supported` does not establish root cause.
 
 ## 3. Output
 
@@ -172,7 +186,7 @@ Classification meanings: `Verified` is directly supported by inspected local evi
 
 ### [Severity or Unknown] — <finding title>
 
-- Classification: Potential | Unknown
+- Classification: <exactly one supplied classification>
 - Evidence references:
 - Evidence still required:
 - Potential impact: Unknown unless supported
@@ -180,6 +194,12 @@ Classification meanings: `Verified` is directly supported by inspected local evi
 ## 9. Security and Operational Risks
 
 ## 10. Technical Debt
+
+### [Severity or Unknown] — <finding title>
+
+- Classification: Technical debt
+- Evidence references:
+- Maintainability or compatibility concern:
 
 ## 11. Compatibility and Business Constraints
 
@@ -226,4 +246,16 @@ Apply these section rules:
 - `Prioritized Roadmap` must not invent priorities. Use only supported priorities or `Unknown`, and keep actions at decision level.
 - `Recommendation` must end with a human scope-decision checkpoint. It must not claim authorization, implementation, validation, or a model-routing change.
 
-Before responding, silently confirm that the input gate passed, every claim is traceable to `$ARGUMENTS`, no classification was elevated, unsupported severity is `Unknown`, no missing fact was invented, and the response stops at human scope decision.
+Before responding, silently confirm that:
+
+- the input gate passed;
+- every claim is traceable to `$ARGUMENTS`;
+- every assessment finding maps back to exactly one supplied discovery `Finding`;
+- each assessment finding's classification exactly matches its supplied discovery `Finding` classification;
+- every material supplied discovery `Finding` appears exactly once in the required classification area;
+- every represented finding preserves its supplied evidence references;
+- no `Evidence`-only item or `Hypothesis` became a new assessment finding;
+- no combined finding classification labels remain;
+- unsupported severity is `Unknown`;
+- no material uncertainty or gap was removed and no missing fact was invented; and
+- the response stops at human scope decision.
