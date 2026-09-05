@@ -95,7 +95,27 @@ Convert the approved task, known symptoms, and hypotheses into the smallest usef
 
 Use the named scope plus directly connected execution dependencies as the default boundary. Do not follow second-order dependencies unless the approved question cannot otherwise be answered.
 
-## 3. Inspect minimally
+## 3. Apply the conditional integration lens
+
+Apply this lens only when the approved scope directly contains one or more integration signals: inbound requests or entry points; scheduled, command, queue, or asynchronous work; persistence, data movement, files, logs, or archival; Commerce data mutation; or authentication, credentials, payload, retry, locking, batching, or error-handling concerns. An integration signal does not authorize a repository-wide checklist or automatic scope expansion.
+
+Derive only the evidence questions applicable to the approved task from these control points:
+
+- entry point and triggering mechanism;
+- input or authentication boundary and validation;
+- durable state and lifecycle transitions;
+- work selection, batch progression, counters, completion, retry, and archival;
+- mutation target and direct Magento dependency;
+- concurrency, idempotency, ordering, and failure handling;
+- logging, observability, and possible secret exposure.
+
+Start from the named anchor and follow only the direct execution dependencies needed to answer those questions. Do not inspect every control point merely because the module is an integration. Do not inspect runtime logs, databases, credentials, external services, or generated files. Do not execute cron, CLI commands, consumers, requests, tests, validation, or reproduction. The absence of a pattern or Magento convention is not proof of application behavior.
+
+An inspected selector, counter increment, state transition, write call, log call, or configuration reference may be `Verified` as a local code fact. Queue blockage, secret disclosure, lost work, duplicate updates, runtime races, and business impact remain `Potential` or `Unknown` unless inspected local code directly proves the narrower code-path claim. Never expose a credential or secret value; report only the relevant identifier, storage/read/write path, and evidence gap. Distinguish custom inventory persistence or mutation from actual MSI behavior unless the relevant MSI implementation is inspected.
+
+When relevant, integrate this analysis into the existing `Architecture and Execution Flow`, `Evidence`, `Findings`, `Constraints and Limitations`, and `Evidence Gaps and Validation Needed` sections. Do not add output headings or recommend more than one next stage.
+
+## 4. Inspect minimally
 
 1. Start with exact paths and identifiers supplied in the scope. Otherwise use narrowly constrained filename or symbol searches.
 2. Inspect only Magento wiring required by the evidence questions, such as module configuration, dependency injection, events, plugins, routes, cron, queues, persistence, or API declarations.
@@ -105,7 +125,7 @@ Use the named scope plus directly connected execution dependencies as the defaul
 
 Do not use Git or GitHub commands, network access, package managers, databases, external services, generated directories, caches, logs, credentials, or secrets.
 
-## 4. Stop conditions
+## 5. Stop conditions
 
 Stop discovery when any of these conditions applies:
 
@@ -118,7 +138,7 @@ Stop discovery when any of these conditions applies:
 
 Report incomplete work as `Partial` or `Blocked`; do not cross the boundary to obtain a more complete answer.
 
-## 5. Evidence and uncertainty
+## 6. Evidence and uncertainty
 
 Use these rules:
 
@@ -141,7 +161,7 @@ Use these rules:
 
 Keep `Scope inspected`, `Files inspected`, `Evidence`, and `Scope not inspected` internally consistent. List each inspected file in `Files inspected`, and cite it in `Evidence` only for claims it supports. If a direct dependency is named but its internals are not inspected, list it in `Scope not inspected` and explain why its internals were not needed to answer the approved static question.
 
-## 6. Output
+## 7. Output
 
 Use exactly this structure:
 
