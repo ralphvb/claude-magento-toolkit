@@ -155,7 +155,14 @@ Use these rules:
 - Preserve conflicting evidence instead of resolving it through assumption.
 - Use Magento conventions only to guide a search, never as evidence of this repository's behavior.
 - Uninspected framework or dependency behavior must not be described as stable, assumed, or verified.
-- Qualify every absence claim with the bounded search that was performed.
+- An absence claim is any application-behavior claim asserting or implying that a control, code path, guard, configuration, dependency, test, validation, or capability does not exist. This includes `no`, `none`, `only`, `sole`, `never`, `always`, `without`, `lacks`, `missing`, and equivalent negative implications.
+- Do not treat an inspected local method lacking a security, idempotency, replay, rate-limit, concurrency, or other control as proof that the control is absent from the approved scope or application.
+- An absence claim may be `Verified` only when the authorized, bounded search is sufficient for that exact claim. For every `Verified` absence claim, keep the following compactly in its existing `Evidence` item: the exact searched boundary; the paths or directories searched; the identifiers, filenames, configuration keys, or symbols searched; and the result of that bounded search. Do not require a repository-wide search or add an output heading.
+- If that bounded search was not performed or cannot establish the absence, state only the inspected positive local code fact and classify the broader absence as `Potential` or `Unknown`.
+- For security or integration controls outside an inspected boundary, use wording such as: “No additional control was identified within the inspected <bounded path/symbol set>; whether one exists elsewhere is Unknown.” Use this wording only when the bounded search is recorded.
+- Never infer absence from Magento conventions, framework expectations, runtime behavior, a single call site, or missing knowledge.
+- `Only`, `sole`, `all`, and equivalent exclusivity claims require the same bounded evidence discipline.
+- Preserve valid local claims, such as a specific equality comparison, a specific missing branch, or a specific unguarded write call, without promoting them into repository-wide or control-wide absence claims.
 - Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
 - `Missing evidence` must list each material unresolved evidence need. Do not write `None within approved scope` while runtime, framework, configuration, dependency, or other material uncertainty remains.
 
@@ -268,4 +275,5 @@ Before responding, silently check output conformance:
 - exactly one next stage is recommended;
 - the Stage is valid for this Skill;
 - the routing gate is `No model-routing change is requested.` for `Human scope decision`, or uses the canonical form for another stage;
+- every negative or exclusivity claim about application behavior either contains the required bounded-search evidence or is rephrased as a local positive fact plus `Potential` or `Unknown`;
 - no incomplete words, placeholders, or contradictory alternatives remain.
