@@ -129,6 +129,8 @@ human scope decision
 
 `magento-assess` preserves discovery finding classifications and evidence references. It synthesizes the handoff but does not reclassify findings or create findings from Evidence-only items.
 
+Discovery uses one canonical classification per `Evidence` and `Finding`; runtime uncertainty belongs in impact, evidence gaps, or hypotheses rather than a combined classification label.
+
 Its evidence contract distinguishes inspected local code facts from uninspected application behavior. `Verified` claims cite an exact repository path, line range, and relevant symbol or configuration key; framework, runtime, browser, external-service, database, configuration-value, or uninspected-dependency behavior remains `Potential` or `Unknown`. A verified local code-path gap does not by itself verify runtime impact, severity, reachability, or user-visible effect. Discovery reports must account consistently for inspected and uninspected scope, and must list material unresolved evidence rather than treating runtime or framework uncertainty as absent.
 
 Discovery reports must support absence and exclusivity claims with an authorized bounded search recorded in the existing evidence item; otherwise the broader claim remains `Potential` or `Unknown` alongside any verified local code fact.
