@@ -4,7 +4,7 @@
 **Assessment version:** <!-- e.g. 1.0.0 -->  
 **Date:** <!-- YYYY-MM-DD -->  
 **Scope:** <!-- Authorized module, component, or flow -->  
-**Status:** <!-- Draft | Validated | Superseded -->
+**Status:** Draft
 
 ## 1. Executive Summary
 
@@ -32,7 +32,7 @@ Use these labels consistently:
 
 - **Verified:** directly supported by inspected evidence.
 - **Potential:** plausible but requires reproduction or additional evidence.
-- **Technical debt:** a maintainability or modernization issue, not necessarily a defect.
+- **Technical debt:** a maintainability or modernization concern supported by exact inspected local evidence, not necessarily a defect.
 - **Unknown:** information required from another system or stakeholder.
 
 ## 4. Business Purpose
@@ -79,7 +79,6 @@ Use these labels consistently:
 **Classification:** Potential  
 **Evidence supporting the hypothesis:**  
 **Evidence still required:**  
-**Validation method:**  
 **Potential impact:**
 
 ## 9. Security and Operational Risks
@@ -122,13 +121,15 @@ Assess where applicable:
 
 ### Phase 3 — Internal Modernization
 
-<!-- Incremental separation of responsibilities and supported framework patterns. -->
+<!-- Conditional, decision-level architectural directions supported by supplied findings. Do not provide class-level designs, implementation steps, or refactor authorization. -->
 
 ### Phase 4 — Optional Architecture Evaluation
 
 <!-- Larger changes that require a separate business and technical decision. -->
 
 ## 13. Testing Strategy
+
+<!-- State that this assessment performed no tests or runtime validation. Report supplied evidence only; do not prescribe tests to execute. -->
 
 ### Characterization Tests
 
@@ -144,7 +145,7 @@ Assess where applicable:
 
 ## 15. Prioritized Roadmap
 
-| Priority | Action | Reason | Dependency |
+| Priority | Decision-level direction | Reason | Dependency |
 |---|---|---|---|
 | Critical |  |  |  |
 | High |  |  |  |
@@ -154,3 +155,9 @@ Assess where applicable:
 ## 16. Recommendation
 
 <!-- State the next decision or bounded implementation phase. Avoid presenting unverified hypotheses as committed scope. -->
+
+### Internal Modernization Posture
+
+<!-- Include only for an approved INTERNAL_MODERNIZATION handoff. Choose exactly one: Not justified within the approved scope | Incremental internal modernization is justified | Unknown; evidence is insufficient. Keep any direction conditional and architectural; do not authorize a refactor. -->
+
+**Posture:**

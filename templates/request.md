@@ -8,6 +8,22 @@ Delete optional guidance before using this template. Keep the completed request 
 
 <!-- Choose exactly one: DIAGNOSTIC | BUGFIX | FEATURE | REFACTOR | MECHANICAL -->
 
+## Review Intent
+
+<!-- Choose STANDARD or INTERNAL_MODERNIZATION. Delete this section to use STANDARD. MODE and REVIEW INTENT are distinct. -->
+
+## Modernization Objective
+
+<!-- Required only for INTERNAL_MODERNIZATION. State the decision this review should support. Delete for standard work. -->
+
+## Modernization Scope
+
+<!-- Required only for INTERNAL_MODERNIZATION. Keep it within Scope. Delete for standard work. -->
+
+## Modernization Dimensions
+
+<!-- Required only for INTERNAL_MODERNIZATION. Select one to three exact items: Separation of responsibilities and coupling | Magento/PHP patterns and framework boundaries | Configuration and persistence architecture | Asynchronous processing and operational resilience | Testability and characterization coverage. Delete for standard work. -->
+
 ## Task
 
 <!-- State the concrete outcome in one or two sentences. -->
