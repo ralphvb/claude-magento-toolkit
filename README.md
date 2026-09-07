@@ -9,7 +9,7 @@ Reusable, token-conscious workflows for developing, diagnosing, testing, and rev
 
 This toolkit provides a small, auditable methodology for AI-assisted Magento development. It is designed to:
 
-- minimize unnecessary context and token consumption;
+- maximize verifiable quality while minimizing total decision cost and unnecessary token use;
 - separate verified facts from assumptions;
 - select models according to task complexity;
 - use lightweight Spec-Driven Development (SDD);
@@ -18,11 +18,11 @@ This toolkit provides a small, auditable methodology for AI-assisted Magento dev
 - keep Git under human control;
 - preserve strict boundaries between generic methodology and client information.
 
-The toolkit is intentionally incremental. It currently provides three manually invoked Skills: `magento-start` for tool-free intake, `magento-discover` for bounded read-only repository discovery, and `magento-assess` for tool-free synthesis of a human-reviewed discovery handoff into a private draft.
+The toolkit is intentionally incremental. It currently provides three manually invoked Skills: `magento-start` for tool-free intake, `magento-discover` for bounded read-only repository discovery, and `magento-assess` for tool-free synthesis of a human-reviewed discovery handoff into a private draft. This remains a diagnostic foundation; modernization review is an optional lens within that foundation, not an implementation workflow.
 
 ## Design principles
 
-1. **Tokens are an engineering resource.** Optimize persistent context, file reads, tool output, conversation history, model choice, and response size—not prompts alone.
+1. **Quality governs optimization.** Seek the highest practical quality of evidence, reasoning, safety, maintainability, and human decision support. Optimize total token cost across context, reads, tool output, routing, synthesis, human review, and likely rework; never omit necessary evidence or weaken correctness, validation, or workflow contracts to make a response cheaper or shorter.
 2. **Evidence precedes implementation.** Do not convert hypotheses into facts or fixes into scope before inspecting the relevant code and behavior.
 3. **Humans control workflow boundaries.** A command may classify and recommend the next stage, but it must not silently run an entire analysis-to-implementation pipeline.
 4. **Behavioral changes require tests.** Use TDD for bugs and features; use characterization tests before refactoring legacy behavior.
@@ -41,6 +41,10 @@ Every task begins in one of five modes:
 | `FEATURE` | New behavior is required | Acceptance criteria, tests, and implementation |
 | `REFACTOR` | Structure should improve without changing behavior | Characterization coverage and incremental refactor |
 | `MECHANICAL` | The task is repetitive and low ambiguity | Small transformation plus deterministic validation |
+
+`MODE` describes the requested work. The separate optional `REVIEW INTENT` is `STANDARD` by default or `INTERNAL_MODERNIZATION` when explicitly requested with a modernization objective, bounded scope, and one to three allowed dimensions. Standard work incurs no modernization inspection.
+
+The Internal Modernization Lens is evidence-led and human-gated. It runs only during approved bounded discovery, records technical debt only from exact local evidence, and cannot authorize a refactor. A bugfix and modernization review need separate handoffs when either objective would materially expand the other's scope.
 
 ## Workflow
 
@@ -87,7 +91,7 @@ See [docs/workflows.md](docs/workflows.md) for mode-specific behavior.
 
 `Fable` is explicitly outside this architecture.
 
-Model routing is a starting policy, not a permanent rule. Adjust it using measured quality, `/usage`, and `/context` results.
+Model routing is a starting policy, not a permanent rule. Use the least expensive route demonstrated to be reliable, not automatically the cheapest model. Escalate when ambiguity, risk, or observed quality requires it, using measured quality, `/usage`, and `/context` results.
 
 Do not pin `model` or `effortLevel` in global settings. Skill and Agent frontmatter declare the preferred route, but the runtime may also be affected by an explicit session selection, environment variables, or organization policy. Therefore, each stage ends with a human routing gate.
 
@@ -105,7 +109,7 @@ The public toolkit contains only reusable methodology.
 
 Project-specific context—including any project `CLAUDE.md`—is outside the toolkit and remains the responsibility of that project. Task-specific assessments, specifications, plans, and findings also remain outside this public repository.
 
-Use `/clear` at meaningful workflow boundaries after durable facts and decisions have been captured in a small task artifact. Do not use conversation history as the only source of important state.
+Use `/clear` at meaningful workflow boundaries after material evidence, uncertainty, constraints, and decisions have been captured in a concise durable artifact. Concision must remove duplication, not information needed by the next decision. Do not use conversation history as the only source of important state.
 
 Auto Memory is expected to be disabled for controlled, auditable workflows. The exact local setting belongs to the user's environment and is not distributed by this repository.
 
