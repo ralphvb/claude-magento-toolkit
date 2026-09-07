@@ -26,12 +26,12 @@
 
 ## 3. Evidence and Limitations
 
-<!-- Identify the reviewed revision, available tests/configuration, missing operational evidence, and assumptions. Do not include secrets. -->
+<!-- Identify the supplied handoff, inspected scope, static test/configuration evidence, supplied deterministic results, missing operational evidence, and assumptions. Static inspection does not establish execution or passing status. Report gaps as supplied limitations; do not include secrets. -->
 
 Use these labels consistently:
 
 - **Verified:** directly supported by inspected evidence.
-- **Potential:** plausible but requires reproduction or additional evidence.
+- **Potential:** plausible but unestablished from the supplied evidence.
 - **Technical debt:** a maintainability or modernization concern supported by exact inspected local evidence, not necessarily a defect.
 - **Unknown:** information required from another system or stakeholder.
 
@@ -68,7 +68,7 @@ Use these labels consistently:
 ### [Severity] — Finding title
 
 **Classification:** Verified  
-**Evidence:** <!-- Exact file, class, method, configuration, or reproducible behavior -->  
+**Evidence:** <!-- Exact supplied file, class, method, configuration, or recorded deterministic result -->  
 **Impact:** <!-- Functional, security, operational, or data impact -->  
 **Recommended direction:** <!-- Direction only; do not silently expand scope -->
 
@@ -109,15 +109,15 @@ Assess where applicable:
 
 ### Phase 0 — Confirm Diagnosis
 
-<!-- Reproduction, metrics, dependency tracing, stakeholder confirmation. -->
+<!-- Preserve supplied evidence gaps and state the human scope decision required before any additional confirmation. Do not prescribe an operational action. -->
 
 ### Phase 1 — Stabilization
 
-<!-- Minimal functional corrections and regression coverage. -->
+<!-- Conditional, decision-level stabilization direction supported by supplied findings. -->
 
 ### Phase 2 — Security and Resilience
 
-<!-- Validation, secrets, retries, idempotency, observability, recovery. -->
+<!-- Conditional, decision-level security or resilience direction supported by supplied findings. -->
 
 ### Phase 3 — Internal Modernization
 
@@ -129,7 +129,7 @@ Assess where applicable:
 
 ## 13. Testing Strategy
 
-<!-- State that this assessment performed no tests or runtime validation. Report supplied evidence only; do not prescribe tests to execute. -->
+<!-- State that this assessment performed no tests or runtime validation. Static test code does not establish execution or passing status; unless the supplied handoff explicitly records a deterministic test result, execution status is Unknown. Report supplied evidence only and do not prescribe any operational action. -->
 
 ### Characterization Tests
 
@@ -141,7 +141,7 @@ Assess where applicable:
 
 ## 14. Questions Before Scope Confirmation
 
-<!-- Include only questions whose answers change priority, design, risk, or estimate. -->
+<!-- Include only decision-level questions whose answers change priority, design, risk, or estimate. Frame additional confirmation as requiring a human scope decision; do not request an operational action. -->
 
 ## 15. Prioritized Roadmap
 
@@ -154,7 +154,7 @@ Assess where applicable:
 
 ## 16. Recommendation
 
-<!-- State the next decision or bounded implementation phase. Avoid presenting unverified hypotheses as committed scope. -->
+<!-- End at the human scope decision. Keep any remediation conditional and decision-level; do not prescribe confirmation or another operational action, and do not present unverified hypotheses as committed scope. -->
 
 <!-- For an approved INTERNAL_MODERNIZATION handoff only, add this subsection
 under Recommendation:

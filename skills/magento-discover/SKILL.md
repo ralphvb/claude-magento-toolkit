@@ -275,7 +275,9 @@ For priority 1, use exactly:
 - Suggested action: Wait for human scope approval before starting another stage.
 ```
 
-For either `Human scope decision` row, the routing gate must say exactly `No model-routing change is requested.` Do not ask the user to verify a model or effort when both are `No change`.
+Whenever the selected stage is `Human scope decision`, `Suggested action` must be exactly `Wait for human scope approval before starting another stage.` Do not append examples, parenthetical text, alternative stages, explanations, or follow-up suggestions to that field. Put any explanation only in `Reason` or another applicable canonical section.
+
+For either `Human scope decision` row, `Model` must be exactly `No change`, `Effort` must be exactly `No change`, and the routing gate must say exactly `No model-routing change is requested.` Do not ask the user to verify a model or effort when both are `No change`.
 
 Recommend `Reproduction` only under priority 3. A static hypothesis that remains unconfirmed at runtime is not, by itself, a reason to recommend `Reproduction`.
 
@@ -301,5 +303,6 @@ Before responding, silently check output conformance:
 - the Internal Modernization Lens ran only for a preflight-approved `INTERNAL_MODERNIZATION` intake;
 - exactly one next stage is recommended;
 - the Stage is valid for this Skill;
-- the routing gate is `No model-routing change is requested.` for `Human scope decision`, or uses the canonical form for another stage;
+- when the Stage is `Human scope decision`, Model is exactly `No change`, Effort is exactly `No change`, Routing gate is exactly `No model-routing change is requested.`, and Suggested action is exactly `Wait for human scope approval before starting another stage.` with nothing appended;
+- for another Stage, the routing gate uses the canonical form;
 - no incomplete words, placeholders, or contradictory alternatives remain.

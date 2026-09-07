@@ -104,9 +104,14 @@ Identify only what must be corrected and the action needed to correct it. Do not
 - Preserve its evidence references, classifications, inspected scope, excluded scope, constraints, conflicts, limitations, and uncertainty.
 - Preserve material uncertainty and gaps from the handoff. Do not add a severity, root cause, risk, absence claim, remediation fact, runtime conclusion, business impact, framework behavior, configuration value, or validation result not explicitly supported by the handoff. If severity is unsupported, use `Unknown`.
 - Separate verified local code facts from operational risk and runtime uncertainty.
+- Static inspection of test files, test names, mocks, assertions, or other test code establishes only the existence and inspected contents of that code. It does not establish that tests pass, passed, are passing, or were executed.
+- Unless the supplied discovery handoff explicitly records a deterministic test result, describe only the existence and static contents of test code and state that test execution status is `Unknown`.
+- Never claim that this assessment executed or validated tests, runtime behavior, database state, logs, configuration values, external systems, or operational procedures. A result explicitly recorded by the supplied handoff may be reported only as supplied evidence, with its source and limitations preserved.
 - Include only evidence-backed risks or explicit unknowns. Do not add content to fill a section; use `None identified from the supplied handoff` where appropriate.
 - Do not quote source code or reproduce secrets. Prefer evidence references. Consolidate duplicate evidence only when every original reference remains traceable.
-- Progressive remediation may contain only conditional, decision-level directions, ordered from evidence confirmation through stabilization, resilience, and optional modernization.
+- The assessment may preserve supplied evidence gaps and state: `Human scope decision is required to determine whether additional confirmation should be authorized.` It must not prescribe, direct, or recommend executing tests, reproducing behavior, inspecting a database, checking logs, querying infrastructure, or performing any other operational action, even conditionally.
+- This prohibition applies to every section, especially `Progressive Remediation`, `Testing Strategy`, `Questions Before Scope Confirmation`, `Prioritized Roadmap`, and `Recommendation`.
+- Progressive remediation may contain only conditional, decision-level directions, ordered from evidence confirmation through stabilization, resilience, and optional modernization. Evidence-confirmation phases may identify the supplied gap and the required human authorization decision, but must not identify an operational action to perform.
 - For an approved `INTERNAL_MODERNIZATION` handoff, state exactly one modernization posture: `Not justified within the approved scope`, `Incremental internal modernization is justified`, or `Unknown; evidence is insufficient`.
 - Use `Incremental internal modernization is justified` only when at least one supplied `Technical debt` finding with exact local evidence is relevant to the approved modernization scope and dimensions. Use `Not justified within the approved scope` only when the supplied findings and bounded evidence support that decision across the approved modernization scope and dimensions, with no material relevant gap. Otherwise use `Unknown; evidence is insufficient`.
 - Any modernization direction must be conditional, architectural, decision-level, and traceable to supplied findings. Do not provide class-level designs, implementation steps, tests to execute, claim that a whole module requires or does not require modernization, or authorize a refactor.
@@ -256,8 +261,9 @@ Apply these section rules:
 - `Evidence and Limitations` must identify the supplied handoff, its inspected scope, and every material gap relevant to the objective.
 - `Security and Operational Risks` must contain only applicable evidence-backed risks or explicit unknowns. Otherwise write `None identified from the supplied handoff`.
 - `Technical Debt` must preserve that classification and must not present maintainability or compatibility concerns as verified defects.
-- `Progressive Remediation` must remain conditional and decision-level. Use `None identified from the supplied handoff` for an inapplicable phase.
-- `Testing Strategy` must state that this assessment performed no tests or runtime validation. If the handoff records tests or runtime validation, report them only as supplied evidence and do not claim this Skill performed them. Do not prescribe tests to execute.
+- `Progressive Remediation` must remain conditional and decision-level. It may preserve supplied evidence gaps and require a human scope decision before additional confirmation, but must not prescribe or recommend an operational action, even conditionally. Use `None identified from the supplied handoff` for an inapplicable phase.
+- `Testing Strategy` must state that this assessment performed no tests or runtime validation. Static test files, names, mocks, assertions, and code establish only their existence and inspected contents, not execution or passing status. Unless the handoff explicitly records a deterministic test result, test execution status is `Unknown`. Report any such supplied result only as supplied evidence and never as work performed by this assessment. Do not prescribe tests to execute or any other operational validation action.
+- `Questions Before Scope Confirmation`, `Prioritized Roadmap`, and `Recommendation` may frame evidence gaps as human authorization decisions, but must not ask for or recommend reproduction, test execution, database inspection, log checks, infrastructure queries, or another operational action.
 - `Prioritized Roadmap` must not invent priorities. Use only supported priorities or `Unknown`, and keep actions at decision level.
 - `Recommendation` must end with a human scope-decision checkpoint. It must not claim authorization, implementation, validation, or a model-routing change.
 - `Internal Modernization Posture` must be omitted for standard handoffs. For an approved `INTERNAL_MODERNIZATION` handoff, it must use exactly one permitted posture and may include only conditional architectural directions supported by supplied findings.
@@ -273,6 +279,9 @@ Before responding, silently confirm that:
 - no `Evidence`-only item or `Hypothesis` became a new assessment finding;
 - no combined finding classification labels remain;
 - unsupported severity is `Unknown`;
+- static test-code evidence is not described as proof that tests pass, passed, are passing, or were executed, and test execution status is `Unknown` unless the handoff explicitly records a deterministic result;
+- the assessment does not claim to have executed or validated tests, runtime behavior, database state, logs, configuration values, external systems, or operational procedures;
+- no section prescribes, directs, or recommends an operational action, even conditionally;
 - any modernization posture and direction conform to the approved intent, scope, dimensions, and supplied findings;
 - no material uncertainty or gap was removed and no missing fact was invented; and
 - the response stops at human scope decision.
