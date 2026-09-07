@@ -74,9 +74,27 @@ Before using any tool, require these non-empty fields:
 
 Accept fields as labels or headings in a normalized request. `MODE` must be exactly one of `DIAGNOSTIC`, `BUGFIX`, `FEATURE`, `REFACTOR`, or `MECHANICAL`.
 
+Normalize an absent `REVIEW INTENT` to `STANDARD`. If supplied, it must be exactly `STANDARD` or `INTERNAL_MODERNIZATION`. `STANDARD` preserves ordinary discovery and must not add modernization evidence questions or inspection.
+
+Before any repository read, an `INTERNAL_MODERNIZATION` intake must also contain these non-empty fields:
+
+- `MODERNIZATION OBJECTIVE`
+- `MODERNIZATION SCOPE`
+- `MODERNIZATION DIMENSIONS`
+
+`MODERNIZATION DIMENSIONS` must select one to three distinct items from this closed set:
+
+- `Separation of responsibilities and coupling`
+- `Magento/PHP patterns and framework boundaries`
+- `Configuration and persistence architecture`
+- `Asynchronous processing and operational resilience`
+- `Testability and characterization coverage`
+
+The modernization scope cannot expand `SCOPE`; it is a narrower boundary for the optional lens.
+
 `SCOPE` must identify at least one concrete module, domain, path, interface, or execution-flow anchor. Optional intake fields are `BUSINESS CONTEXT`, `KNOWN SYMPTOMS`, `KNOWN FACTS`, `HYPOTHESES TO VERIFY`, `ACCEPTANCE CRITERIA`, `VALIDATION`, and `OPEN QUESTIONS`.
 
-If approval is absent, a required field is missing, `MODE` is invalid, or `SCOPE` has no concrete anchor, use only this structure and stop without inspecting anything:
+If approval is absent, a required field is missing, `MODE` or `REVIEW INTENT` is invalid, `SCOPE` has no concrete anchor, or an `INTERNAL_MODERNIZATION` field or dimension selection is invalid, use only this structure and stop without inspecting anything:
 
 ```markdown
 ## Discovery Blocked
@@ -115,7 +133,17 @@ An inspected selector, counter increment, state transition, write call, log call
 
 When relevant, integrate this analysis into the existing `Architecture and Execution Flow`, `Evidence`, `Findings`, `Constraints and Limitations`, and `Evidence Gaps and Validation Needed` sections. Do not add output headings or recommend more than one next stage.
 
-## 4. Inspect minimally
+## 4. Apply the optional Internal Modernization Lens
+
+Activate this lens only when the approved `REVIEW INTENT` is `INTERNAL_MODERNIZATION` and preflight has passed. Do not activate it for `STANDARD` or an absent intent.
+
+Derive the smallest useful modernization evidence questions from `MODERNIZATION OBJECTIVE`. Inspect only `MODERNIZATION SCOPE`, the selected `MODERNIZATION DIMENSIONS`, and direct execution dependencies required by those questions. Use the same shortest-execution-flow, minimal-inspection, evidence, uncertainty, and stop rules as ordinary discovery.
+
+Record a modernization concern as `Technical debt` only when exact inspected local evidence supports the maintainability or compatibility concern. Keep runtime impact, compatibility consequences, broad absence claims, and behavior owned by uninspected dependencies as `Potential` or `Unknown`. Qualify any bounded absence result with the exact search boundary. Never claim that an entire module does or does not require modernization.
+
+Integrate applicable results into the existing output sections. Do not add a repository-wide review, class-level design, implementation step, test execution, refactor authorization, or additional next stage.
+
+## 5. Inspect minimally
 
 1. Start with exact paths and identifiers supplied in the scope. Otherwise use narrowly constrained filename or symbol searches.
 2. Inspect only Magento wiring required by the evidence questions, such as module configuration, dependency injection, events, plugins, routes, cron, queues, persistence, or API declarations.
@@ -125,7 +153,7 @@ When relevant, integrate this analysis into the existing `Architecture and Execu
 
 Do not use Git or GitHub commands, network access, package managers, databases, external services, generated directories, caches, logs, credentials, or secrets.
 
-## 5. Stop conditions
+## 6. Stop conditions
 
 Stop discovery when any of these conditions applies:
 
@@ -138,13 +166,13 @@ Stop discovery when any of these conditions applies:
 
 Report incomplete work as `Partial` or `Blocked`; do not cross the boundary to obtain a more complete answer.
 
-## 6. Evidence and uncertainty
+## 7. Evidence and uncertainty
 
 Use these rules:
 
 - `Verified`: only a claim directly supported by inspected repository evidence. Cite the exact repository path, line or line range, and relevant symbol or configuration key. A directly inspected template binding, branch condition, configuration assignment, or module declaration can be `Verified` as a local code fact.
 - `Potential`: plausible but not established.
-- `Technical debt`: a maintainability or compatibility concern without proof of a functional defect.
+- `Technical debt`: a maintainability or compatibility concern supported by exact inspected local evidence, without proof of a functional defect.
 - `Unknown`: cannot be resolved within the approved repository scope.
 - User-provided statements remain `Provided`, not `Verified`, until repository evidence corroborates them.
 - A hypothesis may be `Supported`, `Contradicted`, or `Inconclusive`; `Supported` does not mean a root cause is proven.
@@ -161,7 +189,7 @@ Use these rules:
 
 Keep `Scope inspected`, `Files inspected`, `Evidence`, and `Scope not inspected` internally consistent. List each inspected file in `Files inspected`, and cite it in `Evidence` only for claims it supports. If a direct dependency is named but its internals are not inspected, list it in `Scope not inspected` and explain why its internals were not needed to answer the approved static question.
 
-## 7. Output
+## 8. Output
 
 Use exactly this structure:
 
@@ -170,6 +198,10 @@ Use exactly this structure:
 
 - Outcome: Complete | Partial | Blocked
 - Mode:
+- Review intent: STANDARD | INTERNAL_MODERNIZATION
+- Modernization objective: <include only for INTERNAL_MODERNIZATION>
+- Modernization scope: <include only for INTERNAL_MODERNIZATION>
+- Modernization dimensions: <include only for INTERNAL_MODERNIZATION>
 - Discovery question:
 - Scope inspected:
 - Scope not inspected:
@@ -265,6 +297,8 @@ Stop after the recommendation and wait for human confirmation.
 Before responding, silently check output conformance:
 
 - all required headings are present;
+- the normalized review intent is valid, and modernization fields appear only for `INTERNAL_MODERNIZATION`;
+- the Internal Modernization Lens ran only for a preflight-approved `INTERNAL_MODERNIZATION` intake;
 - exactly one next stage is recommended;
 - the Stage is valid for this Skill;
 - the routing gate is `No model-routing change is requested.` for `Human scope decision`, or uses the canonical form for another stage;

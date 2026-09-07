@@ -85,6 +85,8 @@ Before producing an assessment, require all of these non-empty fields in `$ARGUM
 
 Treat the input as invalid if a required field or canonical heading is empty, approval is not exactly `yes`, the outcome is absent or invalid, the handoff contains `Discovery Blocked`, or the handoff is otherwise unusable for the stated objective.
 
+If the handoff's normalized `REVIEW INTENT` is `INTERNAL_MODERNIZATION`, also require non-empty `MODERNIZATION OBJECTIVE`, `MODERNIZATION SCOPE`, and `MODERNIZATION DIMENSIONS` from the approved discovery report. Do not infer modernization intent from technical-debt findings or assessment wording.
+
 For any invalid input, return only:
 
 ```markdown
@@ -105,6 +107,9 @@ Identify only what must be corrected and the action needed to correct it. Do not
 - Include only evidence-backed risks or explicit unknowns. Do not add content to fill a section; use `None identified from the supplied handoff` where appropriate.
 - Do not quote source code or reproduce secrets. Prefer evidence references. Consolidate duplicate evidence only when every original reference remains traceable.
 - Progressive remediation may contain only conditional, decision-level directions, ordered from evidence confirmation through stabilization, resilience, and optional modernization.
+- For an approved `INTERNAL_MODERNIZATION` handoff, state exactly one modernization posture: `Not justified within the approved scope`, `Incremental internal modernization is justified`, or `Unknown; evidence is insufficient`.
+- Use `Incremental internal modernization is justified` only when at least one supplied `Technical debt` finding with exact local evidence is relevant to the approved modernization scope and dimensions. Use `Not justified within the approved scope` only when the supplied findings and bounded evidence support that decision across the approved modernization scope and dimensions, with no material relevant gap. Otherwise use `Unknown; evidence is insufficient`.
+- Any modernization direction must be conditional, architectural, decision-level, and traceable to supplied findings. Do not provide class-level designs, implementation steps, tests to execute, claim that a whole module requires or does not require modernization, or authorize a refactor.
 - Do not recommend or initiate another Skill or model route. Stop after the assessment and require a human scope decision.
 
 ### Finding output mapping
@@ -124,7 +129,7 @@ Identify only what must be corrected and the action needed to correct it. Do not
 
 ## 3. Output
 
-Produce the following structure exactly. Do not add top-level report headings. Keep it compact and evidence-led. Omit empty placeholder prose, but retain every numbered heading and its named subsections.
+Produce the following structure exactly. Do not add top-level report headings. Keep it compact and evidence-led. Omit empty placeholder prose, but retain every numbered heading and its named subsections. `Internal Modernization Posture` is the only conditional subsection: include it for an approved `INTERNAL_MODERNIZATION` handoff and omit it otherwise.
 
 ```markdown
 # Technical Diagnostic Assessment
@@ -233,6 +238,10 @@ Classification meanings: `Verified` is directly supported by inspected local evi
 |---|---|---|---|
 
 ## 16. Recommendation
+
+### Internal Modernization Posture
+
+**Posture:** <exactly one permitted posture>
 ```
 
 Apply these section rules:
@@ -245,6 +254,7 @@ Apply these section rules:
 - `Testing Strategy` must state that this assessment performed no tests or runtime validation. If the handoff records tests or runtime validation, report them only as supplied evidence and do not claim this Skill performed them. Do not prescribe tests to execute.
 - `Prioritized Roadmap` must not invent priorities. Use only supported priorities or `Unknown`, and keep actions at decision level.
 - `Recommendation` must end with a human scope-decision checkpoint. It must not claim authorization, implementation, validation, or a model-routing change.
+- `Internal Modernization Posture` must be omitted for standard handoffs. For an approved `INTERNAL_MODERNIZATION` handoff, it must use exactly one permitted posture and may include only conditional architectural directions supported by supplied findings.
 
 Before responding, silently confirm that:
 
@@ -257,5 +267,6 @@ Before responding, silently confirm that:
 - no `Evidence`-only item or `Hypothesis` became a new assessment finding;
 - no combined finding classification labels remain;
 - unsupported severity is `Unknown`;
+- any modernization posture and direction conform to the approved intent, scope, dimensions, and supplied findings;
 - no material uncertainty or gap was removed and no missing fact was invented; and
 - the response stops at human scope decision.
