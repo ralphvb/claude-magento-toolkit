@@ -106,8 +106,9 @@ Identify only what must be corrected and the action needed to correct it. Do not
 - Preserve its evidence references, classifications, inspected scope, excluded scope, constraints, conflicts, limitations, and uncertainty.
 - Preserve material uncertainty and gaps from the handoff. Do not add a severity, root cause, risk, absence claim, remediation fact, runtime conclusion, business impact, framework behavior, configuration value, or validation result not explicitly supported by the handoff. If severity is unsupported, use `Unknown`.
 - Separate verified local code facts from operational risk and runtime uncertainty.
-- Static inspection of test files, test names, mocks, assertions, or other test code establishes only the existence and inspected contents of that code. It does not establish that tests pass, passed, are passing, or were executed.
-- Unless the supplied discovery handoff explicitly records a deterministic test result, describe only the existence and static contents of test code and state that test execution status is `Unknown`.
+- Associate a test file, test name, mock, assertion, or static test-code reference with a hypothesis or finding only when the supplied discovery handoff explicitly maps that evidence reference to that exact claim. Do not infer a relationship from names, proximity, shared classes, modules, flows, or general subject matter, and omit unrelated test prose rather than using it to enrich an executive summary, finding, or other assessment section.
+- When the handoff explicitly maps static test source to the exact claim, say only that the inspected test code contains or asserts the supplied behavior. Static test source alone is not behavioral corroboration, confirmation, validation, characterization, proof that behavior is locked in, or proof that tests executed or passed.
+- Use `corroborates`, `confirms`, `validates`, `locks in`, `characterizes current behavior`, or equivalent stronger test language only when the handoff supplies both an exact mapping from the test evidence to the same claim and a deterministic recorded test result. Otherwise preserve the claim using its non-test evidence and state test execution status as `Unknown` when applicable.
 - Never claim that this assessment executed or validated tests, runtime behavior, database state, logs, configuration values, external systems, or operational procedures. A result explicitly recorded by the supplied handoff may be reported only as supplied evidence, with its source and limitations preserved.
 - Include only evidence-backed risks or explicit unknowns. Do not add content to fill a section; use `None identified from the supplied handoff` where appropriate.
 - Do not quote source code or reproduce secrets. Prefer evidence references. Consolidate duplicate evidence only when every original reference remains traceable.
@@ -130,10 +131,12 @@ Identify only what must be corrected and the action needed to correct it. Do not
   - `Potential` or `Unknown` → Section 8, `Potential Findings to Validate`.
   - `Technical debt` → Section 10, `Technical Debt`.
 - Preserve the supplied evidence references for every represented finding.
+- Associate test evidence with a represented finding only when the handoff explicitly maps that evidence reference to that exact finding; related but unmapped test evidence must be omitted and must not support, corroborate, confirm, characterize, lock in, or validate it.
 - When the supplied handoff has no `Findings` of a classification mapped to Section 7, 8, or 10, the corresponding assessment section must contain exactly `None identified from the supplied handoff.` It must not contain evidence bullets, titles, severity labels, classifications, or explanations that effectively create a finding.
 - A source finding phrased as `Verified code fact; runtime impact Potential` remains `Verified` only for the local code fact. Preserve its impact or reachability as `Potential` or `Unknown`.
 - Use exactly one classification label per assessment finding: `Verified`, `Potential`, `Technical debt`, or `Unknown`. Never output combined labels such as `Potential / Unknown`.
 - A hypothesis status (`Supported`, `Contradicted`, or `Inconclusive`) is not a finding classification and must not be silently converted into one. `Supported` does not establish root cause.
+- Do not normalize or repair discovery-handoff finding classifications; their human review remains an input responsibility outside this Skill.
 
 ## 3. Output
 
@@ -266,7 +269,7 @@ Apply these section rules:
 - `Security and Operational Risks` must contain only applicable evidence-backed risks or explicit unknowns. Otherwise write `None identified from the supplied handoff`.
 - `Technical Debt` must preserve that classification and must not present maintainability or compatibility concerns as verified defects.
 - `Progressive Remediation` must remain conditional and decision-level. It may preserve supplied evidence gaps and require a human scope decision before additional confirmation, but must not prescribe or recommend an operational action, even conditionally. Use `None identified from the supplied handoff` for an inapplicable phase.
-- `Testing Strategy` must state that this assessment performed no tests or runtime validation. Static test files, names, mocks, assertions, and code establish only their existence and inspected contents, not execution or passing status. Unless the handoff explicitly records a deterministic test result, test execution status is `Unknown`. Report any such supplied result only as supplied evidence and never as work performed by this assessment. Do not prescribe tests to execute or any other operational validation action.
+- `Testing Strategy` must state that this assessment performed no tests or runtime validation. Include test evidence only when the handoff explicitly maps its reference to the exact claim being discussed. Mapped static test source establishes only that the inspected code contains or asserts the supplied behavior, not behavioral corroboration, confirmation, validation, characterization, locked-in behavior, execution, or passing status. Stronger test language requires both that exact mapping and a deterministic recorded result; otherwise test execution status is `Unknown` when applicable. Report a qualifying result only as supplied evidence and never as work performed by this assessment. Do not prescribe tests to execute or any other operational validation action.
 - `Questions Before Scope Confirmation`, `Prioritized Roadmap`, and `Recommendation` may frame evidence gaps as human authorization decisions, but must not ask for or recommend reproduction, test execution, database inspection, log checks, infrastructure queries, or another operational action.
 - `Prioritized Roadmap` must not invent priorities. Use only supported priorities or `Unknown`, and keep actions at decision level.
 - `Recommendation` must end with a human scope-decision checkpoint. It must not claim authorization, implementation, validation, or a model-routing change.
@@ -284,7 +287,9 @@ Before responding, silently confirm that:
 - no `Evidence`-only item or `Hypothesis` became a new assessment finding or populated Section 7, 8, or 10, and every such section with no mapped supplied `Finding` contains exactly `None identified from the supplied handoff.`;
 - no combined finding classification labels remain;
 - unsupported severity is `Unknown`;
-- static test-code evidence is not described as proof that tests pass, passed, are passing, or were executed, and test execution status is `Unknown` unless the handoff explicitly records a deterministic result;
+- every test-evidence association has an explicit handoff mapping to the exact hypothesis or finding, and no related but unmapped test evidence is used to enrich or support a claim;
+- static test source alone is described only as inspected test code that contains or asserts the supplied behavior, never as behavioral corroboration, confirmation, validation, characterization, locked-in behavior, execution, or a passing result;
+- stronger test language is used only when the handoff supplies both the exact claim mapping and a deterministic recorded test result; otherwise the claim relies on its non-test evidence and test execution status is `Unknown` when applicable;
 - the assessment does not claim to have executed or validated tests, runtime behavior, database state, logs, configuration values, external systems, or operational procedures;
 - no section prescribes, directs, or recommends an operational action, even conditionally;
 - any modernization posture and direction conform to the approved intent, scope, dimensions, and supplied findings;
