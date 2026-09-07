@@ -5,9 +5,9 @@
 
 ## 1. Objective
 
-Reduce token consumption without sacrificing correctness, security, or the evidence needed to make safe Magento and Adobe Commerce changes.
+Maximum verifiable quality is the primary objective. Achieve the highest practical quality of evidence, reasoning, safety, maintainability, and human decision support while using tokens efficiently.
 
-Optimization is successful only when total workflow cost falls while result quality remains acceptable.
+Token efficiency minimizes total decision cost across context loading, file reads, tool output, model routing, synthesis, human review, and likely rework. It never means reducing necessary evidence, weakening a workflow contract, lowering validation quality, or creating avoidable rework merely to use fewer tokens. Per-response token count and brevity are not optimization objectives when they reduce decision quality.
 
 ## 2. Cost model
 
@@ -24,9 +24,11 @@ fixed session context
 + Agent results
 + model reasoning
 + final output
++ human review
++ likely rework
 ```
 
-A short prompt can still produce an expensive workflow if it causes broad exploration, large command output, repeated context reconstruction, or unnecessary subagents.
+A short prompt or response can still produce an expensive workflow if it causes broad exploration, large command output, repeated context reconstruction, duplicated synthesis, unnecessary Agents, or avoidable rework.
 
 ## 3. Baseline evidence
 
@@ -78,7 +80,9 @@ Define:
 - expected deliverable;
 - maximum useful depth.
 
-Prefer an execution-flow trace over an unbounded repository survey.
+Prefer the smallest evidence-backed scope that fully answers the approved question, usually an execution-flow trace rather than an unbounded repository survey. Bounded inspection is not insufficient inspection: expand scope or evidence when doing so materially improves decision quality, and record unresolved limits when it cannot.
+
+Treat modernization as an explicit opt-in lens. Absent or `STANDARD` review intent adds no modernization questions or reads; `INTERNAL_MODERNIZATION` limits its additional evidence work to the approved objective, scope, and one to three dimensions.
 
 ### 4.2 Keep permanent context small
 
@@ -105,6 +109,8 @@ Prefer:
 - structured output;
 - counts plus actionable failures.
 
+Bound output without removing evidence, failure context, or uncertainty needed for the approved decision.
+
 Avoid:
 
 - full successful test logs;
@@ -115,11 +121,11 @@ Avoid:
 
 ### 4.4 Preserve facts before `/clear`
 
-Conversation history is expensive and temporary. Before clearing, store only the facts, decisions, constraints, and next action required by the next stage.
+Conversation history is expensive and temporary. Before clearing, preserve the material evidence, facts, uncertainty, decisions, constraints, and next action required by the next stage. A concise handoff removes duplication; it does not omit decision-relevant information.
 
-### 4.5 Avoid duplicated discovery
+### 4.5 Avoid duplicated discovery and synthesis
 
-A task artifact should prevent the implementation or reviewer from rediscovering the entire system. It must remain compact enough that reading it is cheaper than repeating discovery.
+A task artifact should prevent the implementation, assessment, or reviewer from repeating discovery or synthesis. It must remain compact enough that reading it is cheaper than repeating work while retaining every material claim, evidence reference, constraint, and gap.
 
 ### 4.6 Stop at workflow gates
 
@@ -127,7 +133,9 @@ A task artifact should prevent the implementation or reviewer from rediscovering
 
 ## 5. Model routing
 
-Do not set `model` or `effortLevel` globally. A global route applies to unrelated projects and may prevent a workflow from using the least expensive adequate model.
+Do not set `model` or `effortLevel` globally. A global route applies to unrelated projects and may prevent a workflow from using the least expensive model route demonstrated to be reliable.
+
+Do not always select the cheapest model. Start with the least expensive reliable route and escalate model capability or effort when evidence shows ambiguity, risk, or insufficient quality. De-escalate after that need is resolved.
 
 Use Skill or Agent frontmatter to declare intent. Treat it as preferred routing rather than unverified runtime fact. At a stage boundary, use session-scoped flags when deterministic routing matters:
 
@@ -193,7 +201,7 @@ Do not create a Skill after observing a task once. A good candidate is repetitiv
 
 ## 7. Agents policy
 
-Separate Agents have their own context and may return large results. Use them when context isolation creates measurable value.
+Separate Agents have their own context and may return large results. Use them only when context isolation or independent reasoning creates measurable decision-quality value greater than the added context and synthesis cost.
 
 Good candidate:
 
@@ -282,6 +290,7 @@ After a workflow, ask:
 
 The strategy is working when:
 
+- maximum verifiable quality is preserved or improved;
 - the same quality requires fewer tokens;
 - Opus use is rare and purposeful;
 - failed commands and repeated reads decline;
@@ -291,4 +300,4 @@ The strategy is working when:
 - deterministic validation catches issues before review;
 - public artifacts remain free of client information.
 
-Token reduction is not successful if it increases defects, removes necessary evidence, or shifts work into repeated rework.
+Token reduction is not successful if it weakens correctness, evidence, safety, maintainability, validation, workflow contracts, or human control, or shifts cost into review and rework. Do not impose token caps, token-count targets, or brevity rules that can override the evidence required for a reliable decision.
