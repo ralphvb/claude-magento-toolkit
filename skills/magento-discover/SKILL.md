@@ -141,6 +141,8 @@ Derive the smallest useful modernization evidence questions from `MODERNIZATION 
 
 Record a modernization concern as `Technical debt` only when exact inspected local evidence supports the maintainability or compatibility concern. Keep runtime impact, compatibility consequences, broad absence claims, and behavior owned by uninspected dependencies as `Potential` or `Unknown`. Qualify any bounded absence result with the exact search boundary. Never claim that an entire module does or does not require modernization.
 
+Every reported `Technical debt` finding and every modernization-specific observation must be relevant to at least one explicitly selected `MODERNIZATION DIMENSION`; state the applicable selected dimension or dimensions in its `Relevance` or `Impact`. Do not add findings, evidence, debt, risks, or modernization discussion from an unselected modernization dimension merely because it was encountered during bounded discovery. A fact outside the selected dimensions that is necessary to explain an approved execution flow may be described neutrally only in `Architecture and Execution Flow`; do not promote it into a modernization finding, technical-debt item, assessment candidate, or recommended direction.
+
 Integrate applicable results into the existing output sections. Do not add a repository-wide review, class-level design, implementation step, test execution, refactor authorization, or additional next stage.
 
 ## 5. Inspect minimally
@@ -174,6 +176,10 @@ Use these rules:
 - `Potential`: plausible but not established.
 - `Technical debt`: a maintainability or compatibility concern supported by exact inspected local evidence, without proof of a functional defect.
 - `Unknown`: cannot be resolved within the approved repository scope.
+- Use exactly one canonical classification label for every `Evidence` item and every `Finding`: `Verified`, `Potential`, `Technical debt`, or `Unknown`.
+- Never emit a combined, parenthetical, compound, or hybrid classification label, including `Verified (Technical debt)`, `Verified (code fact)`, `Technical debt (with a Potential security consequence)`, or `Verified / Potential`.
+- Preserve uncertainty in a separate `Impact`, limitation, or uncertainty sentence. A `Finding` classification remains one canonical label.
+- A verified local code fact may support a `Technical debt` finding, but the `Evidence` classification and `Finding` classification must each be independently explicit and canonical.
 - User-provided statements remain `Provided`, not `Verified`, until repository evidence corroborates them.
 - A hypothesis may be `Supported`, `Contradicted`, or `Inconclusive`; `Supported` does not mean a root cause is proven.
 - Do not use Magento conventions, JavaScript semantics beyond the inspected code, framework behavior, user statements, or absent results as sufficient evidence for a `Verified` application-behavior claim.
@@ -186,6 +192,7 @@ Use these rules:
 - Qualify every absence claim with the bounded search that was performed.
 - Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
 - `Missing evidence` must list each material unresolved evidence need. Do not write `None within approved scope` while runtime, framework, configuration, dependency, or other material uncertainty remains.
+- Do not infer that a submitted request value is a decrypted configuration value merely because it is compared against decrypted configuration. Describe only the value origin established by the inspected code.
 
 Keep `Scope inspected`, `Files inspected`, `Evidence`, and `Scope not inspected` internally consistent. List each inspected file in `Files inspected`, and cite it in `Evidence` only for claims it supports. If a direct dependency is named but its internals are not inspected, list it in `Scope not inspected` and explain why its internals were not needed to answer the approved static question.
 
@@ -216,7 +223,7 @@ Use exactly this structure:
 
 ### E1 — <concise claim>
 
-- Classification: Verified
+- Classification: Verified | Potential | Technical debt | Unknown
 - Evidence: <exact path:line or line range; relevant symbol or configuration key>
 - Relevance:
 
@@ -301,6 +308,9 @@ Before responding, silently check output conformance:
 - all required headings are present;
 - the normalized review intent is valid, and modernization fields appear only for `INTERNAL_MODERNIZATION`;
 - the Internal Modernization Lens ran only for a preflight-approved `INTERNAL_MODERNIZATION` intake;
+- every `Evidence` item and every `Finding` uses exactly one canonical classification label, with uncertainty stated separately;
+- for `INTERNAL_MODERNIZATION`, every `Technical debt` finding and every modernization-specific observation explicitly maps to one or more selected `MODERNIZATION DIMENSIONS`, and no unselected-dimension content is promoted beyond neutral execution-flow context;
+- every submitted or secret-related value origin is described only as established by inspected code, without inferring decryption from a comparison against decrypted configuration;
 - exactly one next stage is recommended;
 - the Stage is valid for this Skill;
 - when the Stage is `Human scope decision`, Model is exactly `No change`, Effort is exactly `No change`, Routing gate is exactly `No model-routing change is requested.`, and Suggested action is exactly `Wait for human scope approval before starting another stage.` with nothing appended;
