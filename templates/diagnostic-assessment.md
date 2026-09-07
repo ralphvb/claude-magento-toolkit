@@ -156,8 +156,13 @@ Assess where applicable:
 
 <!-- State the next decision or bounded implementation phase. Avoid presenting unverified hypotheses as committed scope. -->
 
+<!-- For an approved INTERNAL_MODERNIZATION handoff only, add this subsection
+under Recommendation:
+
 ### Internal Modernization Posture
 
-<!-- Include only for an approved INTERNAL_MODERNIZATION handoff. Choose exactly one: Not justified within the approved scope | Incremental internal modernization is justified | Unknown; evidence is insufficient. Keep any direction conditional and architectural; do not authorize a refactor. -->
+**Posture:** Not justified within the approved scope | Incremental internal
+modernization is justified | Unknown; evidence is insufficient
 
-**Posture:**
+Keep any direction conditional and architectural; do not authorize a refactor.
+Do not add this subsection for a STANDARD handoff. -->

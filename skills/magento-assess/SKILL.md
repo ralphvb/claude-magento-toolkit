@@ -129,7 +129,7 @@ Identify only what must be corrected and the action needed to correct it. Do not
 
 ## 3. Output
 
-Produce the following structure exactly. Do not add top-level report headings. Keep it compact and evidence-led. Omit empty placeholder prose, but retain every numbered heading and its named subsections. `Internal Modernization Posture` is the only conditional subsection: include it for an approved `INTERNAL_MODERNIZATION` handoff and omit it otherwise.
+Produce the following base structure exactly. Do not add top-level report headings. Keep it compact and evidence-led. Omit empty placeholder prose, but retain every numbered heading and its named subsections. `Internal Modernization Posture` is not part of the base structure: include it only for an approved `INTERNAL_MODERNIZATION` handoff and omit it otherwise.
 
 ```markdown
 # Technical Diagnostic Assessment
@@ -239,10 +239,15 @@ Classification meanings: `Verified` is directly supported by inspected local evi
 
 ## 16. Recommendation
 
+```
+
+For an approved `INTERNAL_MODERNIZATION` handoff only, append this subsection
+under `## 16. Recommendation`:
+
+```markdown
 ### Internal Modernization Posture
 
 **Posture:** <exactly one permitted posture>
-```
 
 Apply these section rules:
 
