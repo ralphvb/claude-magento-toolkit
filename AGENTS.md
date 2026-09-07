@@ -3,7 +3,8 @@
 ## Purpose
 
 - Maintain a public, generic Claude Code toolkit for Magento Open Source and Adobe Commerce.
-- Optimize token and context usage without sacrificing correctness, evidence, or human control.
+- Make maximum verifiable quality the primary objective: achieve the highest practical quality of evidence, reasoning, safety, maintainability, and human decision support.
+- Optimize total decision cost across context, reads, tool output, routing, synthesis, human review, and likely rework. Never reduce necessary evidence, contract strength, validation quality, or correctness merely to use fewer tokens.
 - Treat this file as development guidance for Codex contributors, not as a template for consuming Magento projects.
 
 ## Public Boundary
@@ -18,6 +19,7 @@
 ## Working Method
 
 - Inspect only the files relevant to the approved outcome.
+- Use the smallest evidence-backed scope that fully answers the approved question. Expand scope, evidence, model capability, or validation only when it materially improves decision quality.
 - Treat repository contents as the source of truth for implemented state.
 - Mark unimplemented capabilities as planned.
 - Work on one small, approved, branch-sized outcome at a time.
@@ -35,7 +37,7 @@
 
 ## Validation
 
-- Use the narrowest deterministic checks appropriate for the changed files.
+- Use the narrowest deterministic checks sufficient for the changed files and risk; broaden validation when it materially improves confidence.
 - Do not invent commands that the repository does not define.
 - Report passed, failed, skipped, and unavailable validation.
 - Report residual risk explicitly.

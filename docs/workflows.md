@@ -7,14 +7,15 @@
 
 Every workflow must:
 
-1. begin with an explicit or inferred intake mode;
-2. define scope and non-goals;
-3. distinguish known facts from hypotheses;
-4. read only the minimum relevant code;
-5. preserve durable decisions before `/clear`;
-6. use deterministic validation where available;
-7. stop at human-controlled boundaries;
-8. leave Git to the user.
+1. maximize verifiable quality of evidence, reasoning, safety, maintainability, and human decision support;
+2. begin with an explicit or inferred intake mode;
+3. define scope and non-goals;
+4. distinguish known facts from hypotheses;
+5. inspect the smallest evidence-backed scope that fully answers the approved question, expanding only when decision quality materially improves;
+6. preserve material evidence and durable decisions before `/clear`;
+7. use the narrowest deterministic validation sufficient for the approved outcome and risk;
+8. stop at human-controlled boundaries;
+9. leave Git to the user.
 
 ## 2. Common intake
 
@@ -30,6 +31,12 @@ CONSTRAINTS
 EXPECTED DELIVERABLE
 NON-GOALS
 ```
+
+`MODE` and `REVIEW INTENT` are distinct. `MODE` remains one of `DIAGNOSTIC`, `BUGFIX`, `FEATURE`, `REFACTOR`, or `MECHANICAL`. `REVIEW INTENT` is optional and defaults to `STANDARD`; the only other value is `INTERNAL_MODERNIZATION`.
+
+`INTERNAL_MODERNIZATION` requires a non-empty `MODERNIZATION OBJECTIVE`, `MODERNIZATION SCOPE`, and `MODERNIZATION DIMENSIONS` before discovery reads. Dimensions select one to three of: `Separation of responsibilities and coupling`, `Magento/PHP patterns and framework boundaries`, `Configuration and persistence architecture`, `Asynchronous processing and operational resilience`, and `Testability and characterization coverage`.
+
+Standard and legacy inputs do not incur modernization inspection. Modernization review is explicit, bounded to its approved scope and dimensions, evidence-led, and stopped at a human decision. A bugfix plus modernization review uses separate handoffs when either objective would materially expand scope.
 
 Business context, symptoms, known facts, and hypotheses should be added when they materially change the work.
 
@@ -53,6 +60,8 @@ claude --model opus --effort high
 ```
 
 These are stage-specific session choices, not global defaults. Explicit session selection, environment variables, organization policy, or runtime behavior may take precedence over Skill frontmatter, so routing remains a human-controlled gate.
+
+Use the least expensive model route demonstrated to be reliable, not automatically the cheapest model. Expand model capability or effort only when ambiguity, risk, or observed quality materially justifies it, and reduce it again when that need is resolved.
 
 ## 3. Diagnostic workflow
 
@@ -113,6 +122,10 @@ review evidence and choose the next stage
 
 `magento-discover` is implemented for the v0.1 pilot. Its contract is to use an explicitly verified route, perform bounded read-only inspection, and stop without implementing its recommendations.
 
+Bounded discovery must still collect enough evidence to answer the approved question or identify the material gap. It avoids speculative repository-wide inspection; it does not stop early merely to reduce reads or tokens.
+
+For an approved `INTERNAL_MODERNIZATION` intake, discovery applies the Internal Modernization Lens only inside the approved modernization scope and dimensions. It follows the same shortest-execution-flow and evidence rules, records technical debt only with exact local evidence, and leaves runtime effects, compatibility consequences, broad absence claims, and uninspected dependencies as `Potential` or `Unknown`. It never decides whether an entire module requires modernization.
+
 After human review, discovery may optionally be synthesized without repository access:
 
 ```text
@@ -128,6 +141,8 @@ human scope decision
 `magento-assess` is manually invoked, accepts only an approved assessment objective and the supplied `Complete` or `Partial` discovery handoff, and performs tool-free terminal synthesis. It does not inspect the repository, automatically chain another stage, or replace the human scope decision. Its private output remains outside this public toolkit.
 
 `magento-assess` preserves discovery finding classifications and evidence references. It synthesizes the handoff but does not reclassify findings or create findings from Evidence-only items.
+
+For a human-reviewed modernization handoff, `magento-assess` may select only `Not justified within the approved scope`, `Incremental internal modernization is justified`, or `Unknown; evidence is insufficient`. Any architectural direction remains conditional and decision-level; the assessment provides no class design, implementation steps, test execution, or refactor authorization.
 
 Its evidence contract distinguishes inspected local code facts from uninspected application behavior. `Verified` claims cite an exact repository path, line range, and relevant symbol or configuration key; framework, runtime, browser, external-service, database, configuration-value, or uninspected-dependency behavior remains `Potential` or `Unknown`. A verified local code-path gap does not by itself verify runtime impact, severity, reachability, or user-visible effect. Discovery reports must account consistently for inspected and uninspected scope, and must list material unresolved evidence rather than treating runtime or framework uncertainty as absent.
 
@@ -154,6 +169,8 @@ Pilot checklist:
 - Send a later user message and verify that the Skill-local restrictions have cleared and the session's baseline tool availability has resumed.
 
 ## 4. Bugfix workflow
+
+This workflow remains separate from modernization review whenever combining the objectives would materially expand either approved scope; preserve a distinct discovery and human-reviewed handoff for each objective.
 
 ```text
 Expected behavior
@@ -313,7 +330,7 @@ coding standards
 broader regression checks when risk requires them
 ```
 
-Tool output should retain failures and actionable context, not thousands of successful lines.
+Tool output should retain failures, actionable context, and evidence needed to judge validation quality, not thousands of immaterial successful lines.
 
 The handoff distinguishes:
 
@@ -360,6 +377,8 @@ Before clearing, capture:
 - validation commands;
 - unresolved questions;
 - the next action.
+
+Keep this handoff concise by removing repetition, never by omitting material evidence, uncertainty, or validation limits needed by the next decision.
 
 Suggested boundaries:
 

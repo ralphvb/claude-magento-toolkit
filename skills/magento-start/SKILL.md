@@ -77,9 +77,29 @@ Choose exactly one mode matching the deliverable:
 
 Mention secondary concerns without creating parallel workflows.
 
+`MODE` and `REVIEW INTENT` are distinct. Do not create another mode for modernization.
+
 ## 2. Normalize
 
-Produce: `MODE`, `TASK`, `BUSINESS CONTEXT`, `KNOWN SYMPTOMS`, `SCOPE`, `KNOWN FACTS`, `HYPOTHESES TO VERIFY`, `CONSTRAINTS`, `ACCEPTANCE CRITERIA`, `EXPECTED DELIVERABLE`, `VALIDATION`, `NON-GOALS`, and `OPEN QUESTIONS`.
+Produce: `MODE`, `REVIEW INTENT`, `TASK`, `BUSINESS CONTEXT`, `KNOWN SYMPTOMS`, `SCOPE`, `KNOWN FACTS`, `HYPOTHESES TO VERIFY`, `CONSTRAINTS`, `ACCEPTANCE CRITERIA`, `EXPECTED DELIVERABLE`, `VALIDATION`, `NON-GOALS`, and `OPEN QUESTIONS`.
+
+`REVIEW INTENT` must be exactly `STANDARD` or `INTERNAL_MODERNIZATION`. If it is absent, normalize it to `STANDARD`. Never infer `INTERNAL_MODERNIZATION` from the task, mode, scope, technical-debt language, or supplied modernization fields.
+
+For `INTERNAL_MODERNIZATION`, require these non-empty fields:
+
+- `MODERNIZATION OBJECTIVE`
+- `MODERNIZATION SCOPE`
+- `MODERNIZATION DIMENSIONS`
+
+`MODERNIZATION DIMENSIONS` must select one to three distinct items from this closed set:
+
+- `Separation of responsibilities and coupling`
+- `Magento/PHP patterns and framework boundaries`
+- `Configuration and persistence architecture`
+- `Asynchronous processing and operational resilience`
+- `Testability and characterization coverage`
+
+Include the three modernization fields in the normalized request only when the user explicitly supplied them or when they are required to show a blocking gap for `INTERNAL_MODERNIZATION`. Supplied modernization fields do not change a `STANDARD` intent.
 
 Rules:
 
@@ -97,6 +117,8 @@ Use `Open questions: None` when no relevant question remains.
 ## 3. Blocking gaps
 
 A gap is blocking only if its answer could materially change the mode, authorized scope, expected behavior, compatibility, security/data handling, acceptance criteria, or deliverable. Ask at most three questions.
+
+An invalid `REVIEW INTENT`, or an `INTERNAL_MODERNIZATION` intent with a missing required modernization field or invalid dimension selection, is always blocking. Report that gap before recommending discovery.
 
 If blocked:
 
@@ -129,6 +151,8 @@ Recommend exactly one Stage:
 - `REFACTOR` → `Characterization of current behavior`;
 - `MECHANICAL` → `Bounded transformation with deterministic validation`.
 
+`REVIEW INTENT` does not change this mode-based routing. The Internal Modernization Lens can activate only if the approved next stage is discovery; otherwise modernization review requires its own approved handoff when combining objectives would materially expand scope.
+
 Choose the least expensive reliable route:
 
 - bounded discovery, normal implementation, tests → `Sonnet`, `Medium`;
@@ -154,7 +178,7 @@ Use exactly one suggested action without replacing or appending text:
 
 ## 5. Output
 
-Use exactly this structure:
+Use exactly this structure. When section 2 requires modernization fields, insert `### Modernization Objective`, `### Modernization Scope`, and `### Modernization Dimensions` immediately after `### Review Intent`; otherwise omit those headings.
 
 ```markdown
 ## Intake Classification
@@ -166,6 +190,7 @@ Use exactly this structure:
 ## Normalized Request
 
 ### Mode
+### Review Intent
 ### Task
 ### Business Context
 ### Known Symptoms
@@ -196,6 +221,8 @@ Use `High`, `Medium`, or `Low` confidence. Keep the response under approximately
 Before responding, silently check output conformance:
 
 - all required headings are present;
+- `REVIEW INTENT` is valid and absent intent became `STANDARD` without inventing modernization intent;
+- an `INTERNAL_MODERNIZATION` request has all three valid modernization fields;
 - exactly one next stage is recommended;
 - the Stage is valid for this Skill;
 - the routing gate uses the canonical form;
