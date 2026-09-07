@@ -248,6 +248,7 @@ under `## 16. Recommendation`:
 ### Internal Modernization Posture
 
 **Posture:** <exactly one permitted posture>
+```
 
 Apply these section rules:
 
