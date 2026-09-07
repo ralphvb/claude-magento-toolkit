@@ -85,7 +85,9 @@ Before producing an assessment, require all of these non-empty fields in `$ARGUM
 
 Treat the input as invalid if a required field or canonical heading is empty, approval is not exactly `yes`, the outcome is absent or invalid, the handoff contains `Discovery Blocked`, or the handoff is otherwise unusable for the stated objective.
 
-If the handoff's normalized `REVIEW INTENT` is `INTERNAL_MODERNIZATION`, also require non-empty `MODERNIZATION OBJECTIVE`, `MODERNIZATION SCOPE`, and `MODERNIZATION DIMENSIONS` from the approved discovery report. Do not infer modernization intent from technical-debt findings or assessment wording.
+Objective and handoff intent must be compatible. If `ASSESSMENT OBJECTIVE` explicitly requests `INTERNAL_MODERNIZATION`, an `Internal Modernization Posture`, or a modernization decision, require a human-reviewed discovery handoff with explicit `REVIEW INTENT: INTERNAL_MODERNIZATION` and non-empty `MODERNIZATION OBJECTIVE`, `MODERNIZATION SCOPE`, and `MODERNIZATION DIMENSIONS`. A `REVIEW INTENT: STANDARD` handoff, a handoff with no explicit `REVIEW INTENT: INTERNAL_MODERNIZATION`, or a modernization handoff missing any of those fields is invalid for that objective. Identify the mismatch and instruct the user to supply a human-reviewed `INTERNAL_MODERNIZATION` discovery handoff. Do not infer modernization intent from technical-debt findings alone. Do not apply this compatibility rule when the assessment objective is standard; a standard objective with a `REVIEW INTENT: STANDARD` handoff remains valid.
+
+If the handoff's normalized `REVIEW INTENT` is `INTERNAL_MODERNIZATION`, also require non-empty `MODERNIZATION OBJECTIVE`, `MODERNIZATION SCOPE`, and `MODERNIZATION DIMENSIONS` from the approved discovery report. Do not infer the handoff's modernization intent from technical-debt findings or from an assessment objective when the handoff does not explicitly declare that intent.
 
 For any invalid input, return only:
 
@@ -121,13 +123,14 @@ Identify only what must be corrected and the action needed to correct it. Do not
 
 - The classification of every supplied discovery `Finding` is authoritative. Preserve it exactly in the assessment.
 - A verified `Evidence` item may explain a finding but must never upgrade that finding from `Potential`, `Technical debt`, or `Unknown` to `Verified`.
-- Do not create a new assessment finding solely from a supplied `Evidence` item or `Hypothesis` when the discovery handoff did not present it as a `Finding`.
-- Evidence-only local code facts may be summarized in `Architecture`, `Execution Flow`, `Evidence and Limitations`, or `Security and Operational Risks`, with their material uncertainty preserved. Do not convert them into a new finding classification.
+- A discovery `Evidence` item is not an assessment `Finding`. Do not create a new assessment finding solely from a supplied `Evidence` item or `Hypothesis` when the discovery handoff did not present it as a `Finding`.
+- Evidence-only local facts may be summarized only in `Evidence and Limitations`, `Current Architecture`, `Execution Flow`, or `Security and Operational Risks`, with their material uncertainty preserved. Do not place them in Section 7, `Verified Findings`; Section 8, `Potential Findings to Validate`; or Section 10, `Technical Debt`, and do not convert them into a finding, title, severity label, classification, or finding explanation.
 - Represent every material supplied discovery `Finding` exactly once in the area selected by its supplied classification:
   - `Verified` → Section 7, `Verified Findings`.
   - `Potential` or `Unknown` → Section 8, `Potential Findings to Validate`.
   - `Technical debt` → Section 10, `Technical Debt`.
 - Preserve the supplied evidence references for every represented finding.
+- When the supplied handoff has no `Findings` of a classification mapped to Section 7, 8, or 10, the corresponding assessment section must contain exactly `None identified from the supplied handoff.` It must not contain evidence bullets, titles, severity labels, classifications, or explanations that effectively create a finding.
 - A source finding phrased as `Verified code fact; runtime impact Potential` remains `Verified` only for the local code fact. Preserve its impact or reachability as `Potential` or `Unknown`.
 - Use exactly one classification label per assessment finding: `Verified`, `Potential`, `Technical debt`, or `Unknown`. Never output combined labels such as `Potential / Unknown`.
 - A hypothesis status (`Supported`, `Contradicted`, or `Inconclusive`) is not a finding classification and must not be silently converted into one. `Supported` does not establish root cause.
@@ -259,6 +262,7 @@ Apply these section rules:
 
 - `Status` must be `Draft`; the supplied `magento-discover` handoff is static discovery, not validation.
 - `Evidence and Limitations` must identify the supplied handoff, its inspected scope, and every material gap relevant to the objective.
+- `Verified Findings`, `Potential Findings to Validate`, and `Technical Debt` may contain only supplied discovery `Findings` mapped by their authoritative classification. When no supplied finding maps to one of these sections, write exactly `None identified from the supplied handoff.` in that section and do not add evidence-only content or finding-like prose.
 - `Security and Operational Risks` must contain only applicable evidence-backed risks or explicit unknowns. Otherwise write `None identified from the supplied handoff`.
 - `Technical Debt` must preserve that classification and must not present maintainability or compatibility concerns as verified defects.
 - `Progressive Remediation` must remain conditional and decision-level. It may preserve supplied evidence gaps and require a human scope decision before additional confirmation, but must not prescribe or recommend an operational action, even conditionally. Use `None identified from the supplied handoff` for an inapplicable phase.
@@ -271,12 +275,13 @@ Apply these section rules:
 Before responding, silently confirm that:
 
 - the input gate passed;
+- an assessment objective explicitly requesting `INTERNAL_MODERNIZATION`, an `Internal Modernization Posture`, or a modernization decision is paired with an explicit, complete, human-reviewed `INTERNAL_MODERNIZATION` discovery handoff, while a standard objective is not blocked merely because its handoff is `STANDARD`;
 - every claim is traceable to `$ARGUMENTS`;
 - every assessment finding maps back to exactly one supplied discovery `Finding`;
 - each assessment finding's classification exactly matches its supplied discovery `Finding` classification;
 - every material supplied discovery `Finding` appears exactly once in the required classification area;
 - every represented finding preserves its supplied evidence references;
-- no `Evidence`-only item or `Hypothesis` became a new assessment finding;
+- no `Evidence`-only item or `Hypothesis` became a new assessment finding or populated Section 7, 8, or 10, and every such section with no mapped supplied `Finding` contains exactly `None identified from the supplied handoff.`;
 - no combined finding classification labels remain;
 - unsupported severity is `Unknown`;
 - static test-code evidence is not described as proof that tests pass, passed, are passing, or were executed, and test execution status is `Unknown` unless the handoff explicitly records a deterministic result;
