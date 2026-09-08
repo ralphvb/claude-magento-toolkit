@@ -189,6 +189,11 @@ Use these rules:
 - Preserve conflicting evidence instead of resolving it through assumption.
 - Use Magento conventions only to guide a search, never as evidence of this repository's behavior.
 - Uninspected framework or dependency behavior must not be described as stable, assumed, or verified.
+- An inspected custom class, route declaration, interface implementation, return value, configuration value, or method call establishes only that local code fact.
+- Do not infer or describe an uninspected framework, transport, middleware, router, security subsystem, serializer, logger implementation, or deployment effect from that fact.
+- Do not claim an endpoint is transport-authenticated, unauthenticated-by-transport, publicly reachable, CSRF-bypassed at the framework layer, protected, rejected, logged to a destination, encrypted in transit, or otherwise affected by an uninspected dependency.
+- When the framework or dependency implementation is outside scope, describe only the local code fact and state the downstream framework or runtime effect as `Unknown`.
+- For example, if a class method returns `true` from a CSRF-related interface method, report only that return value and the class and method implementing it; do not call this a framework-layer bypass unless the relevant framework behavior was inspected.
 - Findings must describe only the observed maintainability, coupling, persistence, or testability concern and its evidence-backed impact. Do not name a target implementation mechanism, replacement pattern, configuration location, class design, refactor, migration, or solution alternative. In particular, do not frame a finding as `rather than externalizing to <mechanism>` or equivalent. Keep any future modernization direction conditional and decision-level only.
 - Never make an unqualified absence claim from a partial code-path inspection. If reporting that a behavior or call is absent, state the exact inspected path, files, symbols, and/or bounded search that supports the absence.
 - Do not say files are `never` deleted, renamed, or marked consumed unless the bounded inspection or search covers every relevant in-scope path needed for that claim. Otherwise state the narrower verified fact, such as that no removal or marker operation was found in the specifically inspected processing loop.
@@ -200,6 +205,9 @@ Use these rules:
 - If a test does not explicitly exercise a prior counter, prior queue state, repeated call, or other stateful condition, do not use it to support a claim about that condition.
 - When source implementation already supports a code fact, omit a test reference that does not directly add exact evidence.
 - Associate test source with a hypothesis, `Evidence` item, or `Finding` only when the inspected test code directly supports that exact claim.
+- Every test reference used in a `Hypothesis`, `Finding`, `Executive Summary`, `Evidence`, or another canonical section must either point to an explicitly declared `Evidence` item that maps the cited test to that exact claim, or directly state the exact test path, test method, and specific static assertion or construction it supports.
+- Do not reuse a test `Evidence` item to support a different hypothesis, `Finding`, or concern merely because the test file, class, or flow is related.
+- Do not cite a test in a `Finding`'s evidence references unless that test evidence is explicitly mapped to that exact `Finding` or directly described there with its exact test method and static claim. If source implementation already supports the claim, omit unrelated test evidence instead of broadening the evidence set.
 - Do not describe static test source as corroborating, confirming, validating, proving, characterizing current runtime behavior, pinning behavior, locking behavior in, or showing that a behavior is intended.
 - Do not claim tests executed, passed, are passing, or validate application behavior unless a deterministic execution result is recorded in the discovery evidence. In the ordinary read-only static-discovery flow, test execution status is `Unknown`.
 - When static test source is relevant, use wording such as: “The inspected test code contains/asserts <specific supplied behavior>.” Preserve the distinction between that assertion and runtime behavior.
@@ -281,10 +289,13 @@ Before responding, silently confirm that:
 
 - every cross-reference to a `Finding` resolves to its visible title or a visibly declared identifier;
 - every absence claim states its exact bounded inspection or search and does not exceed that boundary;
-- no file under `Scope not inspected` supports, informs, or is cited by a repository-behavior claim; and
+- no file under `Scope not inspected` supports, informs, or is cited by a repository-behavior claim;
 - every `Finding` remains diagnostic, without a target implementation mechanism or solution alternative;
+- no framework, transport, or dependency effect is asserted beyond inspected local code;
 - static test source is described only as inspected code content unless deterministic execution evidence exists;
 - every test association maps to the exact claim;
+- every test reference maps to its exact claim;
+- no test `Evidence` item is reused for a different claim without an explicit exact mapping;
 - every static test reference supports only behavior, inputs, mocks, calls, or assertions explicitly present in the cited test code, without inferring unasserted stateful or cross-invocation conditions;
 - every redundant test reference that does not add exact evidence beyond source implementation is omitted;
 - every group-wide test construction or coverage claim is supported by inspection of every test in the stated group; otherwise the claim names only the exact supporting test files, methods, or selected inspected tests;
