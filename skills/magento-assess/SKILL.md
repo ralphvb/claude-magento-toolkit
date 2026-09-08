@@ -278,7 +278,7 @@ Apply these section rules:
 - `Recommendation` must end with a human scope-decision checkpoint. It must not claim authorization, implementation, validation, or a model-routing change.
 - `Internal Modernization Posture` must be omitted for standard handoffs. For an approved `INTERNAL_MODERNIZATION` handoff, it must use exactly one permitted posture and may include only conditional architectural directions supported by supplied findings.
 - The response must end exactly at the final required assessment content: `## 16. Recommendation`, including `### Internal Modernization Posture` only when applicable. Do not append a conversational epilogue, offer, question, call to action, artifact-saving suggestion, publication suggestion, or a statement such as `let me know`, `I can save`, `I did not write`, `publish`, or equivalent.
-- Do not offer to write, save, export, publish, share, or create an artifact. The final content must end with the required human scope-decision checkpoint and nothing after it.
+- Do not offer to write, save, export, publish, share, or create an artifact. For a standard handoff, the final required content ends with the human scope-decision checkpoint in `## 16. Recommendation`. For an approved `INTERNAL_MODERNIZATION` handoff, `### Internal Modernization Posture` is the final required subsection and must preserve the human scope-decision boundary without adding an offer, instruction, or content after it.
 
 Before responding, silently confirm that:
 
