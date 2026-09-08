@@ -300,6 +300,6 @@ Before responding, silently confirm that:
 - credential logging and secret-related evidence preserve the handoff's exact demonstrated value origin, and no request-supplied value is called `decrypted` unless the handoff explicitly establishes decryption as its origin;
 - any modernization posture and direction conform to the approved intent, scope, dimensions, and supplied findings;
 - no material uncertainty or gap was removed and no missing fact was invented; and
-- the response ends within `## 16. Recommendation`, includes `### Internal Modernization Posture` only when applicable, and stops after the required human scope-decision checkpoint;
+- for a standard handoff, the response ends with the human scope-decision checkpoint in `## 16. Recommendation`; for an approved `INTERNAL_MODERNIZATION` handoff, `### Internal Modernization Posture` is the final required subsection and preserves the human scope-decision boundary without content after it;
 - no conversational epilogue, offer, question, call to action, artifact-saving or publication suggestion, or equivalent statement follows the required assessment content; and
 - the response does not offer to write, save, export, publish, share, or create an artifact.
