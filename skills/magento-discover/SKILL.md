@@ -190,6 +190,8 @@ Use these rules:
 - Use Magento conventions only to guide a search, never as evidence of this repository's behavior.
 - Uninspected framework or dependency behavior must not be described as stable, assumed, or verified.
 - An inspected custom class, route declaration, interface implementation, return value, configuration value, or method call establishes only that local code fact.
+- Do not use `bypass`, `bypassed`, `protected`, `unprotected`, `accepted`, `rejected`, `authenticated`, or equivalent effect language for an uninspected framework, transport, router, middleware, or security subsystem in any canonical section.
+- If inspected custom code implements a framework-related interface or returns a value from a framework-related method, report only the exact local implementation, method, and return value. The resulting framework behavior remains `Unknown` unless the relevant framework implementation is inspected.
 - Do not infer or describe an uninspected framework, transport, middleware, router, security subsystem, serializer, logger implementation, or deployment effect from that fact.
 - Do not claim an endpoint is transport-authenticated, unauthenticated-by-transport, publicly reachable, CSRF-bypassed at the framework layer, protected, rejected, logged to a destination, encrypted in transit, or otherwise affected by an uninspected dependency.
 - When the framework or dependency implementation is outside scope, describe only the local code fact and state the downstream framework or runtime effect as `Unknown`.
@@ -199,12 +201,18 @@ Use these rules:
 - Do not say files are `never` deleted, renamed, or marked consumed unless the bounded inspection or search covers every relevant in-scope path needed for that claim. Otherwise state the narrower verified fact, such as that no removal or marker operation was found in the specifically inspected processing loop.
 - Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
 - `Missing evidence` must list each material unresolved evidence need. Do not write `None within approved scope` while runtime, framework, configuration, dependency, or other material uncertainty remains.
-- Do not infer that a submitted request value is a decrypted configuration value merely because it is compared against decrypted configuration. Describe only the value origin established by the inspected code.
+- Preserve the exact demonstrated origin of every value throughout the complete report, including `Executive Summary`, `Architecture and Execution Flow`, `Evidence`, `Hypotheses`, `Findings`, limitations, and recommendations.
+- A request-supplied value remains request-supplied wherever it is described, even when compared against a configuration value obtained through decryption. A configuration value obtained through decryption remains configuration-sourced wherever it is described.
+- Do not transform, merge, or relabel value origins across sections. When evidence reveals multiple distinct origins, describe each separately and preserve any uncertainty rather than resolving the distinction by inference.
+- Do not state or imply that a logger receives a decrypted configuration value unless the inspected logging call directly receives that decrypted value.
 - Static inspection of test files, test names, mocks, assertions, or test code establishes only the existence and inspected contents of that code.
 - A static test reference may support only the behavior, inputs, mocks, calls, or assertions explicitly present in the cited test code. Do not infer or state unasserted prior state, cross-invocation behavior, runtime conditions, coverage, or relationships from a single test invocation.
 - If a test does not explicitly exercise a prior counter, prior queue state, repeated call, or other stateful condition, do not use it to support a claim about that condition.
 - When source implementation already supports a code fact, omit a test reference that does not directly add exact evidence.
 - Associate test source with a hypothesis, `Evidence` item, or `Finding` only when the inspected test code directly supports that exact claim.
+- An `Evidence` item that includes static test source may be referenced only by a `Hypothesis` or `Finding` whose exact claim is directly supported by the same cited test assertion or construction.
+- Do not reuse counter, error-handling, archival, or other test evidence to support a different concern such as batch selection, dispatch, routing, authentication, or persistence merely because it occurs in the same class or flow.
+- If source implementation supports a claim and no exact test `Evidence` exists, cite only the source implementation. If a different test is relevant, define a separate `Evidence` item with its exact test path, method, and static assertion before referencing it.
 - Every test reference used in a `Hypothesis`, `Finding`, `Executive Summary`, `Evidence`, or another canonical section must either point to an explicitly declared `Evidence` item that maps the cited test to that exact claim, or directly state the exact test path, test method, and specific static assertion or construction it supports.
 - Do not reuse a test `Evidence` item to support a different hypothesis, `Finding`, or concern merely because the test file, class, or flow is related.
 - Do not cite a test in a `Finding`'s evidence references unless that test evidence is explicitly mapped to that exact `Finding` or directly described there with its exact test method and static claim. If source implementation already supports the claim, omit unrelated test evidence instead of broadening the evidence set.
@@ -292,10 +300,13 @@ Before responding, silently confirm that:
 - no file under `Scope not inspected` supports, informs, or is cited by a repository-behavior claim;
 - every `Finding` remains diagnostic, without a target implementation mechanism or solution alternative;
 - no framework, transport, or dependency effect is asserted beyond inspected local code;
+- no prohibited framework-effect terminology is used for an uninspected framework, transport, router, middleware, or security subsystem, and any resulting framework behavior is `Unknown` unless the relevant implementation was inspected;
+- every secret-, credential-, request-, and configuration-value origin is internally consistent across the entire output;
 - static test source is described only as inspected code content unless deterministic execution evidence exists;
 - every test association maps to the exact claim;
 - every test reference maps to its exact claim;
 - no test `Evidence` item is reused for a different claim without an explicit exact mapping;
+- every test-backed `Evidence` reference in `Hypotheses` and `Findings` is exact and non-reused;
 - every static test reference supports only behavior, inputs, mocks, calls, or assertions explicitly present in the cited test code, without inferring unasserted stateful or cross-invocation conditions;
 - every redundant test reference that does not add exact evidence beyond source implementation is omitted;
 - every group-wide test construction or coverage claim is supported by inspection of every test in the stated group; otherwise the claim names only the exact supporting test files, methods, or selected inspected tests;
