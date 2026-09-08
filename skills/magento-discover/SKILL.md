@@ -203,7 +203,7 @@ Use these rules:
 - Do not describe static test source as corroborating, confirming, validating, proving, characterizing current runtime behavior, pinning behavior, locking behavior in, or showing that a behavior is intended.
 - Do not claim tests executed, passed, are passing, or validate application behavior unless a deterministic execution result is recorded in the discovery evidence. In the ordinary read-only static-discovery flow, test execution status is `Unknown`.
 - When static test source is relevant, use wording such as: “The inspected test code contains/asserts <specific supplied behavior>.” Preserve the distinction between that assertion and runtime behavior.
-- Bound every claim about missing, absent, insufficient, or non-characterized test coverage to the exact inspected test files, symbols, and searches. Do not generalize from inspected tests to “existing unit coverage,” “the test suite,” “all tests,” or repository-wide coverage when any relevant test files remain uninspected.
+- Bound every claim about missing, absent, insufficient, or non-characterized test coverage — including claims in an `Evidence` item's `Relevance`, a `Hypothesis`'s `Missing evidence`, or a `Finding` title or `Impact` — to the exact inspected test files, symbols, and searches. Do not generalize from inspected tests to “existing unit coverage,” “the test suite,” “all tests,” or repository-wide coverage when any relevant test files remain uninspected.
 - Do not use `all`, `only`, `every`, `the inspected unit tests`, or equivalent group-wide language for test construction or coverage unless every test in that stated group was inspected and directly supports the claim. Otherwise name only the exact test files, test methods, or selected inspected tests that establish the observed construction pattern.
 - A `Finding` title and its `Impact` must use the same bounded scope as the cited test evidence.
 - If uninspected tests could affect the claim, state that their coverage is `Unknown` and include them in `Scope not inspected` or `Evidence Gaps and Validation Needed` as appropriate. Prefer wording such as: “The inspected unit tests do not characterize <exact interaction>” rather than a broad claim about the entire suite.
@@ -289,7 +289,7 @@ Before responding, silently confirm that:
 - every redundant test reference that does not add exact evidence beyond source implementation is omitted;
 - every group-wide test construction or coverage claim is supported by inspection of every test in the stated group; otherwise the claim names only the exact supporting test files, methods, or selected inspected tests;
 - every `Finding` title and `Impact` uses the same bounded scope as its cited test evidence; and
-- every test-coverage absence claim states its exact inspected boundary and does not generalize over uninspected tests.
+- every test-coverage absence claim, including one in an `Evidence` item's `Relevance`, a `Hypothesis`'s `Missing evidence`, or a `Finding` title or `Impact`, states its exact inspected test-file, symbol, and search boundary and does not generalize over uninspected tests.
 
 `MODE` and `Stage` are separate concepts. A Stage must never contain a Mode value such as `DIAGNOSTIC` or `BUGFIX`.
 
