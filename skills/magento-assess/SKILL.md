@@ -276,6 +276,8 @@ Apply these section rules:
 - `Prioritized Roadmap` must not invent priorities. Use only supported priorities or `Unknown`, and keep actions at decision level.
 - `Recommendation` must end with a human scope-decision checkpoint. It must not claim authorization, implementation, validation, or a model-routing change.
 - `Internal Modernization Posture` must be omitted for standard handoffs. For an approved `INTERNAL_MODERNIZATION` handoff, it must use exactly one permitted posture and may include only conditional architectural directions supported by supplied findings.
+- The response must end exactly at the final required assessment content: `## 16. Recommendation`, including `### Internal Modernization Posture` only when applicable. Do not append a conversational epilogue, offer, question, call to action, artifact-saving suggestion, publication suggestion, or a statement such as `let me know`, `I can save`, `I did not write`, `publish`, or equivalent.
+- Do not offer to write, save, export, publish, share, or create an artifact. The final content must end with the required human scope-decision checkpoint and nothing after it.
 
 Before responding, silently confirm that:
 
@@ -298,4 +300,6 @@ Before responding, silently confirm that:
 - credential logging and secret-related evidence preserve the handoff's exact demonstrated value origin, and no request-supplied value is called `decrypted` unless the handoff explicitly establishes decryption as its origin;
 - any modernization posture and direction conform to the approved intent, scope, dimensions, and supplied findings;
 - no material uncertainty or gap was removed and no missing fact was invented; and
-- the response stops at human scope decision.
+- the response ends within `## 16. Recommendation`, includes `### Internal Modernization Posture` only when applicable, and stops after the required human scope-decision checkpoint;
+- no conversational epilogue, offer, question, call to action, artifact-saving or publication suggestion, or equivalent statement follows the required assessment content; and
+- the response does not offer to write, save, export, publish, share, or create an artifact.

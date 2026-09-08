@@ -189,12 +189,18 @@ Use these rules:
 - Preserve conflicting evidence instead of resolving it through assumption.
 - Use Magento conventions only to guide a search, never as evidence of this repository's behavior.
 - Uninspected framework or dependency behavior must not be described as stable, assumed, or verified.
-- Qualify every absence claim with the bounded search that was performed.
+- Findings must describe only the observed maintainability, coupling, persistence, or testability concern and its evidence-backed impact. Do not name a target implementation mechanism, replacement pattern, configuration location, class design, refactor, migration, or solution alternative. In particular, do not frame a finding as `rather than externalizing to <mechanism>` or equivalent. Keep any future modernization direction conditional and decision-level only.
+- Never make an unqualified absence claim from a partial code-path inspection. If reporting that a behavior or call is absent, state the exact inspected path, files, symbols, and/or bounded search that supports the absence.
+- Do not say files are `never` deleted, renamed, or marked consumed unless the bounded inspection or search covers every relevant in-scope path needed for that claim. Otherwise state the narrower verified fact, such as that no removal or marker operation was found in the specifically inspected processing loop.
 - Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
 - `Missing evidence` must list each material unresolved evidence need. Do not write `None within approved scope` while runtime, framework, configuration, dependency, or other material uncertainty remains.
 - Do not infer that a submitted request value is a decrypted configuration value merely because it is compared against decrypted configuration. Describe only the value origin established by the inspected code.
 
 Keep `Scope inspected`, `Files inspected`, `Evidence`, and `Scope not inspected` internally consistent. List each inspected file in `Files inspected`, and cite it in `Evidence` only for claims it supports. If a direct dependency is named but its internals are not inspected, list it in `Scope not inspected` and explain why its internals were not needed to answer the approved static question.
+
+Do not rely on, describe, cite, or infer repository behavior from a file listed under `Scope not inspected`. Such a file may be named as an uninspected dependency only to preserve the boundary, not as evidence supporting an architecture claim or `Finding`. If a claim requires that file, inspect it only when the approved scope and minimal direct-dependency rule justify it; otherwise omit that part of the claim.
+
+Every reference from a `Hypothesis`, `Finding`, `Executive Summary`, or another canonical section to a `Finding` must be traceable to a visible `Finding` title or an explicitly defined identifier in the same report. Do not use invented or implicit identifiers such as `TD1–TD6` unless each identifier is visibly declared on its corresponding `Finding`. Prefer exact `Evidence` references and concise `Finding` titles over additional identifiers.
 
 ## 8. Output
 
@@ -258,6 +264,13 @@ Use exactly this structure:
 ```
 
 Use `None` where a section has no applicable content. Prefer evidence references over repeated explanations or source excerpts. Recommend exactly one next stage and stop for human confirmation.
+
+Before responding, silently confirm that:
+
+- every cross-reference to a `Finding` resolves to its visible title or a visibly declared identifier;
+- every absence claim states its exact bounded inspection or search and does not exceed that boundary;
+- no file under `Scope not inspected` supports, informs, or is cited by a repository-behavior claim; and
+- every `Finding` remains diagnostic, without a target implementation mechanism or solution alternative.
 
 `MODE` and `Stage` are separate concepts. A Stage must never contain a Mode value such as `DIAGNOSTIC` or `BUGFIX`.
 
