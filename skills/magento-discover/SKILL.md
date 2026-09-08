@@ -195,6 +195,13 @@ Use these rules:
 - Assign severity or impact only when evidence supports it; otherwise mark it `Unknown`.
 - `Missing evidence` must list each material unresolved evidence need. Do not write `None within approved scope` while runtime, framework, configuration, dependency, or other material uncertainty remains.
 - Do not infer that a submitted request value is a decrypted configuration value merely because it is compared against decrypted configuration. Describe only the value origin established by the inspected code.
+- Static inspection of test files, test names, mocks, assertions, or test code establishes only the existence and inspected contents of that code.
+- Associate test source with a hypothesis, `Evidence` item, or `Finding` only when the inspected test code directly supports that exact claim.
+- Do not describe static test source as corroborating, confirming, validating, proving, characterizing current runtime behavior, pinning behavior, locking behavior in, or showing that a behavior is intended.
+- Do not claim tests executed, passed, are passing, or validate application behavior unless a deterministic execution result is recorded in the discovery evidence. In the ordinary read-only static-discovery flow, test execution status is `Unknown`.
+- When static test source is relevant, use wording such as: “The inspected test code contains/asserts <specific supplied behavior>.” Preserve the distinction between that assertion and runtime behavior.
+- Bound every claim about missing, absent, insufficient, or non-characterized test coverage to the exact inspected test files, symbols, and searches. Do not generalize from inspected tests to “existing unit coverage,” “the test suite,” “all tests,” or repository-wide coverage when any relevant test files remain uninspected.
+- If uninspected tests could affect the claim, state that their coverage is `Unknown` and include them in `Scope not inspected` or `Evidence Gaps and Validation Needed` as appropriate. Prefer wording such as: “The inspected unit tests do not characterize <exact interaction>” rather than a broad claim about the entire suite.
 
 Keep `Scope inspected`, `Files inspected`, `Evidence`, and `Scope not inspected` internally consistent. List each inspected file in `Files inspected`, and cite it in `Evidence` only for claims it supports. If a direct dependency is named but its internals are not inspected, list it in `Scope not inspected` and explain why its internals were not needed to answer the approved static question.
 
@@ -270,7 +277,10 @@ Before responding, silently confirm that:
 - every cross-reference to a `Finding` resolves to its visible title or a visibly declared identifier;
 - every absence claim states its exact bounded inspection or search and does not exceed that boundary;
 - no file under `Scope not inspected` supports, informs, or is cited by a repository-behavior claim; and
-- every `Finding` remains diagnostic, without a target implementation mechanism or solution alternative.
+- every `Finding` remains diagnostic, without a target implementation mechanism or solution alternative;
+- static test source is described only as inspected code content unless deterministic execution evidence exists;
+- every test association maps to the exact claim; and
+- every test-coverage absence claim states its exact inspected boundary and does not generalize over uninspected tests.
 
 `MODE` and `Stage` are separate concepts. A Stage must never contain a Mode value such as `DIAGNOSTIC` or `BUGFIX`.
 
