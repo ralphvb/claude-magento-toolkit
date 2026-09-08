@@ -303,7 +303,6 @@ Before responding, silently confirm that:
 - no prohibited framework-effect terminology is used for an uninspected framework, transport, router, middleware, or security subsystem, and any resulting framework behavior is `Unknown` unless the relevant implementation was inspected;
 - every secret-, credential-, request-, and configuration-value origin is internally consistent across the entire output;
 - static test source is described only as inspected code content unless deterministic execution evidence exists;
-- every test association maps to the exact claim;
 - every test reference maps to its exact claim;
 - no test `Evidence` item is reused for a different claim without an explicit exact mapping;
 - every test-backed `Evidence` reference in `Hypotheses` and `Findings` is exact and non-reused;
